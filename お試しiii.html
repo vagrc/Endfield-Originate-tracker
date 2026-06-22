@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+
+<head>
+
+<meta charset="utf-8">
+
+<title>Cyber Circle Progress Tracker</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+
+body {
+
+    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
+
+    background-image: url('https://pbs.twimg.com/media/HBCauHeawAADZ4U.jpg');
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-attachment: fixed;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    height: 100vh;
+
+    margin: 0;
+
+    position: relative;
+
+}
+
+body::before {
+
+    content: '';
+
+    position: absolute;
+
+    top: 0; left: 0; right: 0; bottom: 0;
+
+    background: rgba(0, 0, 0, 0.4);
+
+    z-index: 1;
+
+}
+
+.container {
+
+    position: relative;
+
+    z-index: 2;
+
+    background: rgba(10, 10, 12, 0.08);
+
+    backdrop-filter: blur(4px);
+
+    -webkit-backdrop-filter: blur(4px);
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.5),
+        0 0 80px rgba(0, 0, 0, 0.6);
+
+    width: 360px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    color: #ffffff;
+
+}
+
+.circle-container {
+
+    position: relative;
+
+    width: 240px;
+
+    height: 240px;
+
+    margin-bottom: 15px;
+
+}
+
+svg {
+
+    width: 100%;
+
+    height: 100%;
+
+    transform: rotate(-90deg);
+
+}
+
+.circle-bg {
+
+    fill: none;
+
+    stroke: rgba(255, 255, 255, 0.08);
+
+    stroke-width: 8;
+
+    transition: stroke 0.4s ease, filter 0.4s ease;
+
+}
+
+.circle-progress {
+
+    fill: none;
+
+    stroke-width: 10;
+
+    stroke-linecap: butt;
+
+    stroke-dasharray: 628.318;
+
+    stroke-dashoffset: 628.318;
+
+    transition: stroke-dashoffset 1.2s cubic-bezier(0.19, 1, 0.22, 1), stroke 0.4s ease, filter 0.4s ease, opacity 0.3s ease;
+
+    opacity: 1;
+
+}
+
+.center-text {
+
+    position: absolute;
+
+    top: 52%;
+
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    text-align: center;
+
+    width: 100%;
+
+}
+
+.current-percent {
+
+    font-family: 'Oswald', sans-serif;
+
+    font-weight: 700;
+
+    font-size: 48px;
+
+    line-height: 1;
+
+    transition: color 0.4s ease, filter 0.4s ease;
+
+}
+
+.label {
+
+    font-family: 'Oswald', sans-serif;
+
+    font-size: 11px;
+
+    color: rgba(255, 255, 255, 0.4);
+
+    text-transform: uppercase;
+
+    letter-spacing: 4px;
+
+    margin-top: 8px;
+
+}
+
+.stats {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 8px;
+
+    width: fit-content;
+
+    margin-bottom: 15px;
+
+    padding: 12px 20px;
+
+    background: rgba(255,255,255,0.05);
+
+    border: 1px solid rgba(255,255,255,0.12);
+
+    border-radius: 14px;
+
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+
+    font-family: 'Oswald', sans-serif;
+
+    font-size: 24px;
+
+    letter-spacing: 1px;
+
+    color: rgba(255,255,255,0.6);
+
+    transition: all 0.3s ease;
+
+}
+
+.stats:hover {
+
+    border-color: rgba(0,195,255,0.8);
+
+    box-shadow:
+        0 0 20px rgba(0,195,255,0.5),
+        0 0 40px rgba(0,195,255,0.2);
+
+}
+
+#numInput {
+
+    width: 7ch;
+
+    background: transparent;
+
+    border: none;
+
+    outline: none;
+
+    color: inherit;
+
+    font-family: 'Oswald', sans-serif;
+
+    font-size: 24px;
+
+    font-weight: 500;
+
+    text-align: right;
+
+    letter-spacing: 1px;
+
+    transition: color 0.4s ease, text-shadow 0.4s ease;
+}
+
+
+
+.center-remaining-label {
+
+    margin-top: 15px;
+
+    font-size: 9px;
+
+    letter-spacing: 3px;
+
+    color: rgba(255,255,255,0.35);
+
+}
+
+.center-remaining {
+
+    font-family: 'Oswald', sans-serif;
+
+    font-size: 20px;
+
+    font-weight: 700;
+
+    color: white;
+
+    transition: all 0.4s ease;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="circle-container">
+
+        <svg>
+
+            <circle class="circle-bg" id="circleBg" cx="120" cy="120" r="100"></circle>
+
+            <circle class="circle-progress" id="progressCircle" cx="120" cy="120" r="100"></circle>
+
+        </svg>
+
+       <div class="center-text">
+
+    <div class="current-percent" id="percentText">0.0%</div>
+
+    <div class="label">進捗</div>
+
+    <div class="center-remaining-label">
+
+        REMAINING
+
+    </div>
+
+    <div class="center-remaining" id="remainingCenter">
+
+    660,000
+
+</div>
+
+</div>   <!-- center-text -->
+
+</div>   <!-- circle-container -->
+
+<div class="stats">
+
+    <input type="text" id="numInput" value="0">
+
+    <span>/</span>
+
+    <span>660,000</span>
+
+</div>
+
+    
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+const GOAL = 660000;
+
+const CIRCUMFERENCE = 2 * Math.PI * 100; // 628.318
+
+
+
+function updateProgress() {
+
+    const input = document.getElementById('numInput');
+
+    let expression = input.value.replace(/,/g, '').trim();
+
+    let value = expression
+        .split(/[\s+]+/)   // スペースまたは + で分割
+        .reduce((sum, n) => sum + (parseInt(n) || 0), 0);
+    
+
+    const ratio = value / GOAL;
+
+    const remaining = GOAL - value;
+
+
+
+    let percentStr = "";
+
+    if (value < GOAL) {
+
+        percentStr = (Math.floor((value / GOAL) * 1000) / 10).toFixed(1);
+
+    } else {
+
+        percentStr = (ratio * 100).toFixed(1);
+
+    }
+
+
+
+    let visualRatio = ratio % 1;
+
+    if (ratio > 0 && visualRatio === 0) {
+
+        visualRatio = 1;
+
+    }
+
+    
+
+    let offset = CIRCUMFERENCE - (visualRatio * CIRCUMFERENCE);
+
+
+
+    // 99.9%の時だけ、ほんの少し隙間を残す
+if (percentStr === "99.9") {
+
+    offset = 1;
+
+}
+
+    const circleBg = document.getElementById('circleBg');
+
+    let hue = 0;
+
+    
+
+    if (ratio <= 1) {
+
+        circleBg.style.stroke = 'rgba(255, 255, 255, 0.08)';
+
+        circleBg.style.filter = 'none';
+
+        hue = 360 - (ratio * 165); 
+
+    } else {
+
+        circleBg.style.stroke = 'rgba(0, 195, 255, 0.25)'; 
+
+        circleBg.style.filter = 'drop-shadow(0 0 6px rgba(0, 195, 255, 0.3))';
+
+        const overflowRatio = Math.min(ratio - 1, 1); 
+
+        hue = 145 - (overflowRatio * 80);
+
+    }
+
+    
+
+    const currentHSL = 'hsl(' + hue + ', 100%, 55%)';
+
+
+
+    const progressCircle = document.getElementById('progressCircle');
+
+    const percentText = document.getElementById('percentText');
+
+    const remainingCenter = document.getElementById('remainingCenter');
+    
+
+
+    if (value === 0) {
+
+        progressCircle.style.opacity = '0';
+
+    } else {
+
+        progressCircle.style.opacity = '1';
+
+    }
+
+
+
+    progressCircle.style.strokeDashoffset = offset;
+
+    progressCircle.style.stroke = currentHSL;
+
+    progressCircle.style.filter = 'drop-shadow(0 0 15px ' + currentHSL + ')';
+
+
+
+    percentText.innerText = percentStr + '%';
+
+    percentText.style.color = currentHSL;
+
+    percentText.style.filter = 'drop-shadow(0 0 10px ' + currentHSL + ')';
+
+    
+
+ input.value = value.toLocaleString();
+ input.style.color = currentHSL;
+ input.style.textShadow = '0 0 10px ' + currentHSL;
+ saveValue(value);
+ 
+
+
+
+if (remaining <= 0) {
+
+    remainingCenter.innerText = '完凸可能';
+    remainingCenter.style.color = currentHSL;
+    remainingCenter.style.textShadow = '0 0 15px ' + currentHSL;
+
+} else {
+
+    remainingCenter.innerText = remaining.toLocaleString();
+    remainingCenter.style.color = currentHSL;
+    remainingCenter.style.textShadow = '0 0 10px ' + currentHSL;
+
+}
+}
+
+
+
+document.getElementById('numInput').addEventListener('keypress', function(e) {
+
+    if (e.key === 'Enter') {
+
+        updateProgress();
+	
+
+    }
+
+});
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyAVh5-phw8hBmgqNpchlUbOmvPjF-B1F7M",
+
+  authDomain: "arknights-endfield-tracker.firebaseapp.com",
+
+  projectId: "arknights-endfield-tracker",
+
+  storageBucket: "arknights-endfield-tracker.firebasestorage.app",
+
+  messagingSenderId: "1098323392414",
+
+  appId: "1:1098323392414:web:c804d5beb53a3280b1888f"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+async function saveValue(value) {
+    await setDoc(doc(db, "tracker", "main"), {
+        value: value
+    });
+}
+
+async function loadValue() {
+    const snap = await getDoc(doc(db, "tracker", "main"));
+
+    if (snap.exists()) {
+        document.getElementById('numInput').value = snap.data().value;
+    }
+
+    updateProgress();
+}
+
+loadValue();
+
+</script>
+
+</body>
+
+</html> 
+
