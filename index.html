@@ -362,7 +362,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const mainRef = doc(db, "tracker", "main");
-const historyCollection = collection(db, "tracker", "history");
+const historyCollection = collection(db, "history");
 
 let isLoading = false;
 let lastValue = 0;
@@ -390,7 +390,7 @@ async function saveValue(value) {
 /* その日の最初のアクセス時だけ履歴を作る */
 async function saveDailyHistory(value) {
     const key = getLocalDateKey();
-    const ref = doc(db, "tracker", "history", key);
+    const ref = doc(db, "history", key);
     const snap = await getDoc(ref);
 
     if (!snap.exists()) {
@@ -717,7 +717,7 @@ function renderHistoryList(records) {
             if (!confirm(`${formatDate(r.date)} の記録を削除しますか？`)) return;
 
             try {
-                await deleteDoc(doc(db, "tracker", "history", r.id));
+                await deleteDoc(doc(db, "history", r.id));
                 await refreshHistory();
             } catch (error) {
                 console.error(error);
