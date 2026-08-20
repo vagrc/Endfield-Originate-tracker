@@ -391,17 +391,13 @@ async function saveValue(value) {
 async function saveDailyHistory(value) {
     const key = getLocalDateKey();
     const ref = doc(db, "history", key);
-    const snap = await getDoc(ref);
 
-    if (!snap.exists()) {
-        await setDoc(ref, {
-            value: Number(value),
-            date: key,
-            createdAt: new Date().toISOString()
-        });
-    }
+    await setDoc(ref, {
+        value: Number(value),
+        date: key,
+        updatedAt: new Date().toISOString()
+    }, { merge: true });
 }
-
 function updateProgress(valueOverride = null, shouldSave = true) {
     const input = document.getElementById("numInput");
 
