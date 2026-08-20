@@ -1,2142 +1,787 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-
 <meta charset="utf-8">
-
 <title>Cyber Circle Progress Tracker</title>
-
 <link rel="apple-touch-icon" href="HBCauHeawAADZ4U.jpg">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
-
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&display=swap" rel="stylesheet">
-
 <style>
+* { box-sizing: border-box; }
 
 body {
-
     font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
-
     background-image: url('https://pbs.twimg.com/media/HBCauHeawAADZ4U.jpg');
-
     background-size: cover;
-
     background-position: center;
-
     background-attachment: fixed;
-
     display: flex;
-
     justify-content: center;
-
     align-items: center;
-
-    height: 100vh;
-
+    min-height: 100vh;
     margin: 0;
-
     position: relative;
-
+    overflow: hidden;
 }
-
 body::before {
-
     content: '';
-
     position: absolute;
-
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    background: rgba(0, 0, 0, 0.4);
-
-    z-index: 1;
-
-}
-
-.container {
-
-    position: relative;
-
-    z-index: 2;
-
-    background: rgba(10, 10, 12, 0.08);
-
-    backdrop-filter: blur(4px);
-
-    -webkit-backdrop-filter: blur(4px);
-
-    border: 1px solid rgba(255, 255, 255, 0.15);
-
-    box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.5),
-        0 0 80px rgba(0, 0, 0, 0.6);
-
-    width: 360px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    color: #ffffff;
-
-}
-
-.circle-container {
-
-    position: relative;
-
-    width: 240px;
-
-    height: 240px;
-
-    margin-bottom: 15px;
-
-}
-
-svg {
-
-    width: 100%;
-
-    height: 100%;
-
-    transform: rotate(-90deg);
-
-}
-
-.circle-bg {
-
-    fill: none;
-
-    stroke: rgba(255, 255, 255, 0.08);
-
-    stroke-width: 8;
-
-    transition: stroke 0.4s ease, filter 0.4s ease;
-
-}
-
-.circle-progress {
-
-    fill: none;
-
-    stroke-width: 10;
-
-    stroke-linecap: butt;
-
-    stroke-dasharray: 628.318;
-
-    stroke-dashoffset: 628.318;
-
-    transition:
-        stroke-dashoffset 1.2s cubic-bezier(0.19, 1, 0.22, 1),
-        stroke 0.4s ease,
-        filter 0.4s ease,
-        opacity 0.3s ease;
-
-    opacity: 1;
-
-}
-
-.center-text {
-
-    position: absolute;
-
-    top: 52%;
-
-    left: 50%;
-
-    transform: translate(-50%, -50%);
-
-    text-align: center;
-
-    width: 100%;
-
-}
-
-.current-percent {
-
-    font-family: 'Oswald', sans-serif;
-
-    font-weight: 700;
-
-    font-size: 48px;
-
-    line-height: 1;
-
-    transition: color 0.4s ease, filter 0.4s ease;
-
-}
-
-.label {
-
-    font-family: 'Oswald', sans-serif;
-
-    font-size: 11px;
-
-    color: rgba(255, 255, 255, 0.4);
-
-    text-transform: uppercase;
-
-    letter-spacing: 4px;
-
-    margin-top: 8px;
-
-}
-
-.stats {
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    gap: 8px;
-
-    width: fit-content;
-
-    margin-bottom: 15px;
-
-    padding: 12px 20px;
-
-    background: rgba(255,255,255,0.05);
-
-    border: 1px solid rgba(255,255,255,0.12);
-
-    border-radius: 14px;
-
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
-
-    font-family: 'Oswald', sans-serif;
-
-    font-size: 24px;
-
-    letter-spacing: 1px;
-
-    color: rgba(255,255,255,0.6);
-
-    transition: all 0.3s ease;
-
-}
-
-.stats:hover {
-
-    border-color: rgba(0,195,255,0.8);
-
-    box-shadow:
-        0 0 20px rgba(0,195,255,0.5),
-        0 0 40px rgba(0,195,255,0.2);
-
-}
-
-#numInput {
-
-    width: 7ch;
-
-    background: transparent;
-
-    border: none;
-
-    outline: none;
-
-    color: inherit;
-
-    font-family: 'Oswald', sans-serif;
-
-    font-size: 24px;
-
-    font-weight: 500;
-
-    text-align: right;
-
-    letter-spacing: 1px;
-
-    transition: color 0.4s ease, text-shadow 0.4s ease;
-
-}
-
-.center-remaining-label {
-
-    margin-top: 15px;
-
-    font-size: 9px;
-
-    letter-spacing: 3px;
-
-    color: rgba(255,255,255,0.35);
-
-}
-
-.center-remaining {
-
-    font-family: 'Oswald', sans-serif;
-
-    font-size: 20px;
-
-    font-weight: 700;
-
-    color: white;
-
-    transition: all 0.4s ease;
-
-}
-
-
-/* =========================================
-   STATISTICS OVERLAY
-========================================= */
-
-#historyOverlay {
-
-    position: fixed;
-
     inset: 0;
-
-    z-index: 100;
-
-    display: none;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background: rgba(0, 0, 0, 0.82);
-
-    backdrop-filter: blur(12px);
-
-    -webkit-backdrop-filter: blur(12px);
-
-    padding: 30px;
-
-    box-sizing: border-box;
-
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
 }
-
-#historyOverlay.active {
-
+.container {
+    position: relative;
+    z-index: 2;
+    background: rgba(10, 10, 12, 0.08);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 50px rgba(0,0,0,.5), 0 0 80px rgba(0,0,0,.6);
+    width: 360px;
     display: flex;
-
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
 }
+.circle-container {
+    position: relative;
+    width: 240px;
+    height: 240px;
+    margin-bottom: 15px;
+}
+svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.circle-bg {
+    fill: none;
+    stroke: rgba(255,255,255,.08);
+    stroke-width: 8;
+    transition: stroke .4s ease, filter .4s ease;
+}
+.circle-progress {
+    fill: none;
+    stroke-width: 10;
+    stroke-linecap: butt;
+    stroke-dasharray: 628.318;
+    stroke-dashoffset: 628.318;
+    transition: stroke-dashoffset 1.2s cubic-bezier(.19,1,.22,1), stroke .4s ease, filter .4s ease, opacity .3s ease;
+}
+.center-text {
+    position: absolute;
+    top: 52%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+    width: 100%;
+}
+.current-percent {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 1;
+    transition: color .4s ease, filter .4s ease;
+}
+.label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    color: rgba(255,255,255,.4);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-top: 8px;
+}
+.stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    margin-bottom: 15px;
+    padding: 12px 20px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px;
+    box-shadow: 0 0 20px rgba(0,0,0,.3);
+    font-family: 'Oswald', sans-serif;
+    font-size: 24px;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,.6);
+    transition: all .3s ease;
+}
+.stats:hover {
+    border-color: rgba(0,195,255,.8);
+    box-shadow: 0 0 20px rgba(0,195,255,.5), 0 0 40px rgba(0,195,255,.2);
+}
+#numInput {
+    width: 7ch;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: inherit;
+    font-family: 'Oswald', sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    text-align: right;
+    letter-spacing: 1px;
+}
+.center-remaining-label {
+    margin-top: 15px;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,.35);
+}
+.center-remaining {
+    font-family: 'Oswald', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    transition: all .4s ease;
+}
+
+/* 統計画面 */
+.history-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    background: rgba(0,0,0,.84);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+.history-overlay.open { display: flex; }
 
 .history-panel {
-
-    position: relative;
-
-    width: min(900px, 100%);
-
-    max-height: 90vh;
-
-    overflow-y: auto;
-
-    box-sizing: border-box;
-
-    padding: 42px 45px 45px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(25, 27, 32, 0.94),
-            rgba(8, 9, 12, 0.96)
-        );
-
-    border: 1px solid rgba(255,255,255,0.13);
-
-    box-shadow:
-        0 30px 100px rgba(0,0,0,0.8),
-        0 0 80px rgba(0,195,255,0.06);
-
-    color: white;
-
-}
-
-.history-panel::before {
-
-    content: '';
-
-    position: absolute;
-
-    top: 0;
-    left: 0;
-    right: 0;
-
-    height: 1px;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(0,195,255,0.7),
-            transparent
-        );
-
-}
-
-.history-header {
-
+    width: min(920px, 100%);
+    height: min(690px, calc(100vh - 28px));
+    background: rgba(13,15,19,.96);
+    border: 1px solid rgba(255,255,255,.16);
+    box-shadow: 0 25px 80px rgba(0,0,0,.75), 0 0 45px rgba(180,20,30,.08);
+    padding: 22px 24px 18px;
     display: flex;
-
+    flex-direction: column;
+    color: #fff;
+}
+.history-head {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
-
-    align-items: flex-start;
-
-    margin-bottom: 35px;
-
+    flex: 0 0 auto;
 }
-
 .history-title {
-
-    font-family: 'Oswald', sans-serif;
-
-    font-size: 30px;
-
-    font-weight: 700;
-
-    letter-spacing: 5px;
-
     margin: 0;
-
+    font-size: clamp(25px, 4vw, 38px);
+    font-weight: 700;
+    letter-spacing: .06em;
 }
-
-.history-subtitle {
-
-    font-family: 'Oswald', sans-serif;
-
-    font-size: 10px;
-
-    letter-spacing: 4px;
-
-    color: rgba(255,255,255,0.35);
-
-    margin-top: 7px;
-
-}
-
 .history-close {
-
-    width: 38px;
-
-    height: 38px;
-
-    border: 1px solid rgba(255,255,255,0.15);
-
-    background: rgba(255,255,255,0.04);
-
-    color: rgba(255,255,255,0.65);
-
-    font-size: 20px;
-
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(255,255,255,.16);
+    background: rgba(255,255,255,.04);
+    color: rgba(255,255,255,.7);
     cursor: pointer;
-
-    transition: all 0.25s ease;
-
+    font-size: 22px;
+    line-height: 1;
 }
-
-.history-close:hover {
-
-    color: white;
-
-    border-color: rgba(0,195,255,0.7);
-
-    box-shadow: 0 0 20px rgba(0,195,255,0.25);
-
-}
+.history-close:hover { background: rgba(255,255,255,.1); }
 
 .history-current {
-
-    display: flex;
-
-    align-items: baseline;
-
-    gap: 15px;
-
-    margin-bottom: 35px;
-
-}
-
-.history-current-label {
-
-    font-family: 'Oswald', sans-serif;
-
-    font-size: 10px;
-
-    letter-spacing: 4px;
-
-    color: rgba(255,255,255,0.35);
-
-}
-
-.history-current-value {
-
-    font-family: 'Oswald', sans-serif;
-
-    font-size: 38px;
-
-    font-weight: 700;
-
-}
-
-.history-chart-title {
-
-    font-family: 'Oswald', sans-serif;
-
-    font-size: 11px;
-
-    letter-spacing: 4px;
-
-    color: rgba(255,255,255,0.45);
-
-    margin-bottom: 12px;
-
-}
-
-.history-chart {
-
-    position: relative;
-
-    width: 100%;
-
-    height: 280px;
-
-    margin-bottom: 40px;
-
-    border-left: 1px solid rgba(255,255,255,0.1);
-
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(255,255,255,0.035) 1px,
-            transparent 1px
-        );
-
-    background-size: 100% 25%;
-
-}
-
-#historyChartSvg {
-
-    width: 100%;
-
-    height: 100%;
-
-    overflow: visible;
-
-}
-
-.history-line {
-
-    fill: none;
-
-    stroke: #00c3ff;
-
-    stroke-width: 2.5;
-
-    filter: drop-shadow(0 0 7px rgba(0,195,255,0.8));
-
-}
-
-.history-area {
-
-    fill: url(#historyGradient);
-
-    opacity: 0.18;
-
-}
-
-.history-point {
-
-    fill: #101216;
-
-    stroke: #00c3ff;
-
-    stroke-width: 2;
-
-    filter: drop-shadow(0 0 5px rgba(0,195,255,0.7));
-
-}
-
-.history-label {
-
-    font-family: 'Oswald', sans-serif;
-
-    font-size: 9px;
-
-    fill: rgba(255,255,255,0.4);
-
-}
-
-.history-value-label {
-
-    font-family: 'Oswald', sans-serif;
-
-    font-size: 9px;
-
-    fill: rgba(255,255,255,0.65);
-
-}
-
-.history-list-title {
-
-    font-family: 'Oswald', sans-serif;
-
-    font-size: 11px;
-
-    letter-spacing: 4px;
-
-    color: rgba(255,255,255,0.45);
-
-    margin-bottom: 12px;
-
-}
-
-.history-list {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 1px;
-
-}
-
-.history-row {
-
-    display: grid;
-
-    grid-template-columns: 110px 1fr auto;
-
-    align-items: center;
-
-    min-height: 52px;
-
-    padding: 0 15px;
-
-    background: rgba(255,255,255,0.035);
-
-    border-left: 2px solid rgba(0,195,255,0.25);
-
-    box-sizing: border-box;
-
-}
-
-.history-row:hover {
-
-    background: rgba(0,195,255,0.06);
-
-    border-left-color: rgba(0,195,255,0.8);
-
-}
-
-.history-month {
-
-    font-family: 'Oswald', sans-serif;
-
+    margin-top: 4px;
+    color: rgba(255,255,255,.5);
     font-size: 12px;
-
-    letter-spacing: 2px;
-
-    color: rgba(255,255,255,0.5);
-
+}
+.history-current strong {
+    color: #fff;
+    font-family: 'Oswald', sans-serif;
+    font-size: 20px;
+    margin-left: 8px;
 }
 
-.history-total {
-
-    font-family: 'Oswald', sans-serif;
-
-    font-size: 17px;
-
-    text-align: right;
-
+.chart-wrap {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 250px;
+    margin-top: 14px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    border-bottom: 1px solid rgba(255,255,255,.08);
 }
-
-.history-increase {
-
-    min-width: 110px;
-
-    text-align: right;
-
-    font-family: 'Oswald', sans-serif;
-
+#historyChart {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.chart-empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,.35);
+    pointer-events: none;
     font-size: 14px;
-
-    color: #00c3ff;
-
 }
 
-.history-increase.first {
-
-    color: rgba(255,255,255,0.25);
-
+.history-bottom {
+    flex: 0 0 auto;
+    margin-top: 12px;
 }
-
-.history-empty {
-
-    padding: 40px 20px;
-
-    text-align: center;
-
+.history-subtitle {
+    font-size: 13px;
+    color: rgba(255,255,255,.45);
+    margin-bottom: 7px;
+}
+.history-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px 10px;
+    max-height: 112px;
+    overflow: hidden;
+}
+.history-row {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    background: rgba(255,255,255,.035);
+    border: 1px solid rgba(255,255,255,.07);
+}
+.history-date {
     font-family: 'Oswald', sans-serif;
-
-    letter-spacing: 3px;
-
-    color: rgba(255,255,255,0.3);
-
+    font-size: 12px;
+    color: rgba(255,255,255,.65);
+    white-space: nowrap;
 }
-
-.history-loading {
-
-    padding: 80px 20px;
-
-    text-align: center;
-
+.history-value {
+    margin-left: auto;
     font-family: 'Oswald', sans-serif;
+    font-size: 15px;
+    white-space: nowrap;
+}
+.history-delete {
+    border: 0;
+    background: transparent;
+    color: rgba(255,60,70,.72);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 2px 3px;
+}
+.history-delete:hover { color: #ff3c46; transform: scale(1.1); }
 
-    letter-spacing: 4px;
-
-    color: rgba(255,255,255,0.4);
-
+.history-note {
+    margin-top: 7px;
+    color: rgba(255,255,255,.28);
+    font-size: 10px;
 }
 
-
-/* iPad / small screen */
-
-@media (max-width: 650px) {
-
-    #historyOverlay {
-
-        padding: 12px;
-
-    }
-
+@media (max-width: 700px) {
     .history-panel {
-
-        max-height: 94vh;
-
-        padding: 30px 22px 30px;
-
+        padding: 16px 14px 12px;
+        height: calc(100vh - 20px);
     }
-
-    .history-title {
-
-        font-size: 24px;
-
-        letter-spacing: 3px;
-
-    }
-
-    .history-current-value {
-
-        font-size: 30px;
-
-    }
-
-    .history-chart {
-
-        height: 220px;
-
-    }
-
-    .history-row {
-
-        grid-template-columns: 75px 1fr auto;
-
-        padding: 0 9px;
-
-    }
-
-    .history-month {
-
-        font-size: 10px;
-
-    }
-
-    .history-total {
-
-        font-size: 14px;
-
-    }
-
-    .history-increase {
-
-        min-width: 85px;
-
-        font-size: 12px;
-
-    }
-
+    .history-list { grid-template-columns: repeat(2, 1fr); }
+    .chart-wrap { min-height: 235px; }
 }
-
+@media (max-width: 430px) {
+    .history-list { grid-template-columns: 1fr; max-height: 92px; }
+    .history-row { padding: 5px 7px; }
+    .history-title { font-size: 25px; }
+}
 </style>
-
 </head>
 
 <body>
 
-
 <div class="container">
-
     <div class="circle-container">
-
         <svg>
-
-            <circle
-                class="circle-bg"
-                id="circleBg"
-                cx="120"
-                cy="120"
-                r="100">
-            </circle>
-
-            <circle
-                class="circle-progress"
-                id="progressCircle"
-                cx="120"
-                cy="120"
-                r="100">
-            </circle>
-
+            <circle class="circle-bg" id="circleBg" cx="120" cy="120" r="100"></circle>
+            <circle class="circle-progress" id="progressCircle" cx="120" cy="120" r="100"></circle>
         </svg>
-
         <div class="center-text">
-
-            <div
-                class="current-percent"
-                id="percentText">
-                0.0%
-            </div>
-
-            <div class="label">
-                進捗
-            </div>
-
-            <div class="center-remaining-label">
-                REMAINING
-            </div>
-
-            <div
-                class="center-remaining"
-                id="remainingCenter">
-                660,000
-            </div>
-
+            <div class="current-percent" id="percentText">0.0%</div>
+            <div class="label">進捗</div>
+            <div class="center-remaining-label">REMAINING</div>
+            <div class="center-remaining" id="remainingCenter">660,000</div>
         </div>
-
     </div>
-
 
     <div class="stats">
-
-        <input
-            type="text"
-            id="numInput"
-            value="0"
-            autocomplete="off">
-
+        <input type="text" id="numInput" value="0" autocomplete="off">
         <span>/</span>
-
         <span>660,000</span>
-
     </div>
-
 </div>
 
-
-<!-- =========================================
-     STATISTICS OVERLAY
-========================================= -->
-
-<div id="historyOverlay">
-
+<div class="history-overlay" id="historyOverlay">
     <div class="history-panel">
-
-        <div class="history-header">
-
-            <div>
-
-                <h1 class="history-title">
-                    MONTHLY STATISTICS
-                </h1>
-
-                <div class="history-subtitle">
-                    ENDFIELD TRACKER / PROGRESS HISTORY
-                </div>
-
-            </div>
-
-            <button
-                class="history-close"
-                id="historyClose"
-                aria-label="Close">
-                ×
-            </button>
-
+        <div class="history-head">
+            <h1 class="history-title">赤晶石収支統計</h1>
+            <button class="history-close" id="historyClose" aria-label="閉じる">×</button>
         </div>
-
 
         <div class="history-current">
-
-            <span class="history-current-label">
-                CURRENT
-            </span>
-
-            <span
-                class="history-current-value"
-                id="historyCurrentValue">
-                0
-            </span>
-
+            現在の赤晶石
+            <strong id="historyCurrentValue">0</strong>
         </div>
 
-
-        <div class="history-chart-title">
-            PROGRESS
+        <div class="chart-wrap">
+            <canvas id="historyChart"></canvas>
+            <div class="chart-empty" id="chartEmpty">記録がありません</div>
         </div>
 
-        <div class="history-chart">
-
-            <svg
-                id="historyChartSvg"
-                viewBox="0 0 800 280"
-                preserveAspectRatio="none">
-
-                <defs>
-
-                    <linearGradient
-                        id="historyGradient"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1">
-
-                        <stop
-                            offset="0%"
-                            stop-color="#00c3ff"
-                            stop-opacity="0.7">
-                        </stop>
-
-                        <stop
-                            offset="100%"
-                            stop-color="#00c3ff"
-                            stop-opacity="0">
-                        </stop>
-
-                    </linearGradient>
-
-                </defs>
-
-                <path
-                    id="historyArea"
-                    class="history-area">
-                </path>
-
-                <path
-                    id="historyLine"
-                    class="history-line">
-                </path>
-
-                <g id="historyPoints"></g>
-
-                <g id="historyLabels"></g>
-
-            </svg>
-
+        <div class="history-bottom">
+            <div class="history-subtitle">保存された記録</div>
+            <div class="history-list" id="historyList"></div>
+            <div class="history-note">古い記録はグラフ上で自動的にまとめて表示されます。</div>
         </div>
-
-
-        <div class="history-list-title">
-            MONTHLY INCREASE
-        </div>
-
-        <div
-            class="history-list"
-            id="historyList">
-
-            <div class="history-loading">
-                LOADING...
-            </div>
-
-        </div>
-
     </div>
-
 </div>
 
-
 <script type="module">
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
-import {
-    getFirestore,
-    doc,
-    setDoc,
-    getDoc,
-    collection,
-    getDocs
+    getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-
 const GOAL = 660000;
-
 const CIRCUMFERENCE = 2 * Math.PI * 100;
 
-
 const firebaseConfig = {
-
     apiKey: "AIzaSyAVh5-phw8hBmgqNpchlUbOmvPjF-B1F7M",
-
     authDomain: "arknights-endfield-tracker.firebaseapp.com",
-
     projectId: "arknights-endfield-tracker",
-
     storageBucket: "arknights-endfield-tracker.firebasestorage.app",
-
     messagingSenderId: "1098323392414",
-
     appId: "1:1098323392414:web:c804d5beb53a3280b1888f"
-
 };
 
-
 const app = initializeApp(firebaseConfig);
-
 const db = getFirestore(app);
 
+const mainRef = doc(db, "tracker", "main");
+const historyCollection = collection(db, "tracker", "history");
 
-/* =========================================
-   CURRENT VALUE
-========================================= */
+let isLoading = false;
+let lastValue = 0;
 
-async function saveValue(value) {
-
-    try {
-
-        await setDoc(
-            doc(db, "tracker", "main"),
-            {
-                value: value
-            }
-        );
-
-    } catch (error) {
-
-        console.error("Failed to save value:", error);
-
-    }
-
+function getLocalDateKey(date = new Date()) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
 }
 
-
-function updateProgress(shouldSave = true) {
-
-    const input = document.getElementById('numInput');
-
-    let expression = input.value
-        .replace(/,/g, '')
-        .trim();
-
-
-    let value = expression
-        .split(/[\s+]+/)
-        .reduce(
-            (sum, n) => sum + (parseInt(n) || 0),
-            0
-        );
-
-
-    const ratio = value / GOAL;
-
-    const remaining = GOAL - value;
-
-
-    let percentStr = "";
-
-
-    if (value < GOAL) {
-
-        percentStr =
-            (
-                Math.floor(
-                    (value / GOAL) * 1000
-                ) / 10
-            ).toFixed(1);
-
-    } else {
-
-        percentStr =
-            (ratio * 100).toFixed(1);
-
-    }
-
-
-    let visualRatio = ratio % 1;
-
-
-    if (
-        ratio > 0 &&
-        visualRatio === 0
-    ) {
-
-        visualRatio = 1;
-
-    }
-
-
-    let offset =
-        CIRCUMFERENCE -
-        (visualRatio * CIRCUMFERENCE);
-
-
-    /* 99.9%の時だけ、ほんの少し隙間を残す */
-
-    if (percentStr === "99.9") {
-
-        offset = 1;
-
-    }
-
-
-    const circleBg =
-        document.getElementById('circleBg');
-
-
-    let hue = 0;
-
-
-    if (ratio <= 1) {
-
-        circleBg.style.stroke =
-            'rgba(255, 255, 255, 0.08)';
-
-        circleBg.style.filter =
-            'none';
-
-        hue =
-            360 - (ratio * 165);
-
-    } else {
-
-        circleBg.style.stroke =
-            'rgba(0, 195, 255, 0.25)';
-
-        circleBg.style.filter =
-            'drop-shadow(0 0 6px rgba(0, 195, 255, 0.3))';
-
-        const overflowRatio =
-            Math.min(ratio - 1, 1);
-
-        hue =
-            145 - (overflowRatio * 80);
-
-    }
-
-
-    const currentHSL =
-        'hsl(' +
-        hue +
-        ', 100%, 55%)';
-
-
-    const progressCircle =
-        document.getElementById(
-            'progressCircle'
-        );
-
-    const percentText =
-        document.getElementById(
-            'percentText'
-        );
-
-    const remainingCenter =
-        document.getElementById(
-            'remainingCenter'
-        );
-
-
-    if (value === 0) {
-
-        progressCircle.style.opacity =
-            '0';
-
-    } else {
-
-        progressCircle.style.opacity =
-            '1';
-
-    }
-
-
-    progressCircle.style.strokeDashoffset =
-        offset;
-
-    progressCircle.style.stroke =
-        currentHSL;
-
-    progressCircle.style.filter =
-        'drop-shadow(0 0 15px ' +
-        currentHSL +
-        ')';
-
-
-    percentText.innerText =
-        percentStr + '%';
-
-    percentText.style.color =
-        currentHSL;
-
-    percentText.style.filter =
-        'drop-shadow(0 0 10px ' +
-        currentHSL +
-        ')';
-
-
-    input.value =
-        value.toLocaleString();
-
-    input.style.color =
-        currentHSL;
-
-    input.style.textShadow =
-        '0 0 10px ' +
-        currentHSL;
-
-
-    if (remaining <= 0) {
-
-        remainingCenter.innerText =
-            '完凸可能';
-
-        remainingCenter.style.color =
-            currentHSL;
-
-        remainingCenter.style.textShadow =
-            '0 0 15px ' +
-            currentHSL;
-
-    } else {
-
-        remainingCenter.innerText =
-            remaining.toLocaleString();
-
-        remainingCenter.style.color =
-            currentHSL;
-
-        remainingCenter.style.textShadow =
-            '0 0 10px ' +
-            currentHSL;
-
-    }
-
-
-    if (shouldSave) {
-
-        saveValue(value);
-
-    }
-
-
-    return value;
-
+function formatDate(key) {
+    const [y, m, d] = key.split("-");
+    return `${y}/${m}/${d}`;
 }
-
-
-/* =========================================
-   MONTHLY BACKUP
-========================================= */
-
-function getCurrentMonthKey() {
-
-    const now = new Date();
-
-    const year =
-        now.getFullYear();
-
-    const month =
-        String(
-            now.getMonth() + 1
-        ).padStart(2, '0');
-
-    return `${year}-${month}`;
-
-}
-
-
-async function saveMonthlySnapshot(value) {
-
-    const monthKey =
-        getCurrentMonthKey();
-
-
-    const historyRef =
-        doc(
-            db,
-            "history",
-            monthKey
-        );
-
-
-    try {
-
-        const existing =
-            await getDoc(historyRef);
-
-
-        /*
-         * その月の履歴が既に存在するなら
-         * 上書きしない。
-         *
-         * 「その月に最初にサイトを開いた時」
-         * の値を保存する。
-         */
-
-        if (existing.exists()) {
-
-            return;
-
-        }
-
-
-        await setDoc(
-            historyRef,
-            {
-                value: value,
-                month: monthKey,
-                savedAt: new Date().toISOString()
-            }
-        );
-
-
-        console.log(
-            "Monthly snapshot saved:",
-            monthKey,
-            value
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Failed to save monthly snapshot:",
-            error
-        );
-
-    }
-
-}
-
-
-/* =========================================
-   LOAD CURRENT VALUE
-========================================= */
-
-async function loadValue() {
-
-    try {
-
-        const snap =
-            await getDoc(
-                doc(db, "tracker", "main")
-            );
-
-
-        let value = 0;
-
-
-        if (snap.exists()) {
-
-            value =
-                Number(
-                    snap.data().value
-                ) || 0;
-
-            document.getElementById(
-                'numInput'
-            ).value = value;
-
-        }
-
-
-        /*
-         * 読み込み時はFirestoreへ
-         * 再保存しない。
-         */
-
-        updateProgress(false);
-
-
-        /*
-         * 現在値を読み込んだ後に
-         * 月次バックアップを確認。
-         */
-
-        await saveMonthlySnapshot(value);
-
-    } catch (error) {
-
-        console.error(
-            "Failed to load value:",
-            error
-        );
-
-    }
-
-}
-
-
-/* =========================================
-   HISTORY DATA
-========================================= */
-
-async function getHistoryData() {
-
-    const snapshot =
-        await getDocs(
-            collection(db, "history")
-        );
-
-
-    const history = [];
-
-
-    snapshot.forEach((docSnap) => {
-
-        const data =
-            docSnap.data();
-
-
-        if (
-            typeof data.value === 'number' &&
-            data.month
-        ) {
-
-            history.push({
-
-                month: data.month,
-
-                value: data.value
-
-            });
-
-        }
-
-    });
-
-
-    history.sort(
-        (a, b) =>
-            a.month.localeCompare(b.month)
-    );
-
-
-    return history;
-
-}
-
-
-/* =========================================
-   FORMAT
-========================================= */
 
 function formatNumber(value) {
-
-    return Number(value)
-        .toLocaleString();
-
+    return Number(value || 0).toLocaleString("ja-JP");
 }
 
-
-function formatIncrease(value) {
-
-    if (value > 0) {
-
-        return '+' +
-            formatNumber(value);
-
-    }
-
-    if (value === 0) {
-
-        return '±0';
-
-    }
-
-    return formatNumber(value);
-
+async function saveValue(value) {
+    await setDoc(mainRef, { value: value });
 }
 
+/* その日の最初のアクセス時だけ履歴を作る */
+async function saveDailyHistory(value) {
+    const key = getLocalDateKey();
+    const ref = doc(db, "tracker", "history", key);
+    const snap = await getDoc(ref);
 
-/* =========================================
-   DRAW GRAPH
-========================================= */
-
-function drawHistoryChart(history) {
-
-    const svg =
-        document.getElementById(
-            'historyChartSvg'
-        );
-
-    const line =
-        document.getElementById(
-            'historyLine'
-        );
-
-    const area =
-        document.getElementById(
-            'historyArea'
-        );
-
-    const pointsGroup =
-        document.getElementById(
-            'historyPoints'
-        );
-
-    const labelsGroup =
-        document.getElementById(
-            'historyLabels'
-        );
-
-
-    line.setAttribute(
-        'd',
-        ''
-    );
-
-    area.setAttribute(
-        'd',
-        ''
-    );
-
-    pointsGroup.innerHTML = '';
-
-    labelsGroup.innerHTML = '';
-
-
-    if (history.length === 0) {
-
-        return;
-
+    if (!snap.exists()) {
+        await setDoc(ref, {
+            value: Number(value),
+            date: key,
+            createdAt: new Date().toISOString()
+        });
     }
-
-
-    const width = 800;
-
-    const height = 280;
-
-
-    const paddingLeft = 25;
-
-    const paddingRight = 25;
-
-    const paddingTop = 30;
-
-    const paddingBottom = 35;
-
-
-    const graphWidth =
-        width -
-        paddingLeft -
-        paddingRight;
-
-    const graphHeight =
-        height -
-        paddingTop -
-        paddingBottom;
-
-
-    const values =
-        history.map(
-            item => item.value
-        );
-
-
-    let minValue =
-        Math.min(...values);
-
-    let maxValue =
-        Math.max(...values);
-
-
-    /*
-     * 値が全部同じ場合でも
-     * グラフが表示されるようにする。
-     */
-
-    if (minValue === maxValue) {
-
-        minValue -= 1;
-
-        maxValue += 1;
-
-    }
-
-
-    const range =
-        maxValue - minValue;
-
-
-    const points =
-        history.map(
-            (item, index) => {
-
-                const x =
-                    history.length === 1
-                    ? width / 2
-                    : paddingLeft +
-                      (
-                        index /
-                        (history.length - 1)
-                      ) *
-                      graphWidth;
-
-
-                const y =
-                    paddingTop +
-                    (
-                        1 -
-                        (
-                            (item.value - minValue) /
-                            range
-                        )
-                    ) *
-                    graphHeight;
-
-
-                return {
-                    x,
-                    y,
-                    value: item.value,
-                    month: item.month
-                };
-
-            }
-        );
-
-
-    const linePath =
-        points
-            .map(
-                (point, index) =>
-                    (
-                        index === 0
-                        ? 'M'
-                        : 'L'
-                    ) +
-                    ' ' +
-                    point.x +
-                    ' ' +
-                    point.y
-            )
-            .join(' ');
-
-
-    line.setAttribute(
-        'd',
-        linePath
-    );
-
-
-    const areaPath =
-        linePath +
-        ' L ' +
-        points[points.length - 1].x +
-        ' ' +
-        (height - paddingBottom) +
-        ' L ' +
-        points[0].x +
-        ' ' +
-        (height - paddingBottom) +
-        ' Z';
-
-
-    area.setAttribute(
-        'd',
-        areaPath
-    );
-
-
-    points.forEach(
-        (point, index) => {
-
-            const circle =
-                document.createElementNS(
-                    'http://www.w3.org/2000/svg',
-                    'circle'
-                );
-
-
-            circle.setAttribute(
-                'class',
-                'history-point'
-            );
-
-            circle.setAttribute(
-                'cx',
-                point.x
-            );
-
-            circle.setAttribute(
-                'cy',
-                point.y
-            );
-
-            circle.setAttribute(
-                'r',
-                4
-            );
-
-
-            pointsGroup.appendChild(
-                circle
-            );
-
-
-            const monthLabel =
-                document.createElementNS(
-                    'http://www.w3.org/2000/svg',
-                    'text'
-                );
-
-
-            monthLabel.setAttribute(
-                'class',
-                'history-label'
-            );
-
-            monthLabel.setAttribute(
-                'x',
-                point.x
-            );
-
-            monthLabel.setAttribute(
-                'y',
-                height - 10
-            );
-
-            monthLabel.setAttribute(
-                'text-anchor',
-                'middle'
-            );
-
-
-            monthLabel.textContent =
-                point.month;
-
-
-            labelsGroup.appendChild(
-                monthLabel
-            );
-
-
-            const valueLabel =
-                document.createElementNS(
-                    'http://www.w3.org/2000/svg',
-                    'text'
-                );
-
-
-            valueLabel.setAttribute(
-                'class',
-                'history-value-label'
-            );
-
-            valueLabel.setAttribute(
-                'x',
-                point.x
-            );
-
-            valueLabel.setAttribute(
-                'y',
-                point.y - 12
-            );
-
-            valueLabel.setAttribute(
-                'text-anchor',
-                'middle'
-            );
-
-
-            valueLabel.textContent =
-                formatNumber(
-                    point.value
-                );
-
-
-            labelsGroup.appendChild(
-                valueLabel
-            );
-
-        }
-    );
-
 }
 
+function updateProgress(valueOverride = null, shouldSave = true) {
+    const input = document.getElementById("numInput");
 
-/* =========================================
-   BUILD HISTORY LIST
-========================================= */
-
-function buildHistoryList(history) {
-
-    const list =
-        document.getElementById(
-            'historyList'
-        );
-
-
-    list.innerHTML = '';
-
-
-    if (history.length === 0) {
-
-        list.innerHTML =
-            '<div class="history-empty">' +
-            'NO HISTORY DATA' +
-            '</div>';
-
-        return;
-
+    let value;
+    if (valueOverride !== null) {
+        value = Number(valueOverride) || 0;
+    } else {
+        let expression = input.value.replace(/,/g, "").trim();
+        value = expression
+            .split(/[\s+]+/)
+            .reduce((sum, n) => sum + (parseInt(n) || 0), 0);
     }
 
+    value = Math.max(0, value);
+    lastValue = value;
 
-    history.forEach(
-        (item, index) => {
+    const ratio = value / GOAL;
+    const remaining = GOAL - value;
 
-            const row =
-                document.createElement(
-                    'div'
-                );
+    let percentStr;
+    if (value < GOAL) {
+        percentStr = (Math.floor((value / GOAL) * 1000) / 10).toFixed(1);
+    } else {
+        percentStr = (ratio * 100).toFixed(1);
+    }
 
-            row.className =
-                'history-row';
+    let visualRatio = ratio % 1;
+    if (ratio > 0 && visualRatio === 0) visualRatio = 1;
 
+    let offset = CIRCUMFERENCE - (visualRatio * CIRCUMFERENCE);
+    if (percentStr === "99.9") offset = 1;
 
-            const month =
-                document.createElement(
-                    'div'
-                );
+    const circleBg = document.getElementById("circleBg");
+    let hue;
 
-            month.className =
-                'history-month';
+    if (ratio <= 1) {
+        circleBg.style.stroke = "rgba(255,255,255,.08)";
+        circleBg.style.filter = "none";
+        hue = 360 - (ratio * 165);
+    } else {
+        circleBg.style.stroke = "rgba(0,195,255,.25)";
+        circleBg.style.filter = "drop-shadow(0 0 6px rgba(0,195,255,.3))";
+        const overflowRatio = Math.min(ratio - 1, 1);
+        hue = 145 - (overflowRatio * 80);
+    }
 
-            month.textContent =
-                item.month;
+    const currentHSL = `hsl(${hue}, 100%, 55%)`;
+    const progressCircle = document.getElementById("progressCircle");
+    const percentText = document.getElementById("percentText");
+    const remainingCenter = document.getElementById("remainingCenter");
 
+    progressCircle.style.opacity = value === 0 ? "0" : "1";
+    progressCircle.style.strokeDashoffset = offset;
+    progressCircle.style.stroke = currentHSL;
+    progressCircle.style.filter = `drop-shadow(0 0 15px ${currentHSL})`;
 
-            const total =
-                document.createElement(
-                    'div'
-                );
+    percentText.innerText = percentStr + "%";
+    percentText.style.color = currentHSL;
+    percentText.style.filter = `drop-shadow(0 0 10px ${currentHSL})`;
 
-            total.className =
-                'history-total';
+    input.value = value.toLocaleString();
+    input.style.color = currentHSL;
+    input.style.textShadow = `0 0 10px ${currentHSL}`;
 
-            total.textContent =
-                formatNumber(
-                    item.value
-                );
+    if (remaining <= 0) {
+        remainingCenter.innerText = "完凸可能";
+        remainingCenter.style.color = currentHSL;
+        remainingCenter.style.textShadow = `0 0 15px ${currentHSL}`;
+    } else {
+        remainingCenter.innerText = remaining.toLocaleString();
+        remainingCenter.style.color = currentHSL;
+        remainingCenter.style.textShadow = `0 0 10px ${currentHSL}`;
+    }
 
-
-            const increase =
-                document.createElement(
-                    'div'
-                );
-
-            increase.className =
-                'history-increase';
-
-
-            if (index === 0) {
-
-                increase.classList.add(
-                    'first'
-                );
-
-                increase.textContent =
-                    '—';
-
-            } else {
-
-                const difference =
-                    item.value -
-                    history[index - 1].value;
-
-
-                increase.textContent =
-                    formatIncrease(
-                        difference
-                    );
-
-            }
-
-
-            row.appendChild(
-                month
-            );
-
-            row.appendChild(
-                total
-            );
-
-            row.appendChild(
-                increase
-            );
-
-
-            list.appendChild(
-                row
-            );
-
-        }
-    );
-
+    if (shouldSave && !isLoading) {
+        saveValue(value).catch(err => console.error("保存エラー:", err));
+    }
 }
 
-
-/* =========================================
-   OPEN HISTORY
-========================================= */
-
-async function openHistory() {
-
-    const overlay =
-        document.getElementById(
-            'historyOverlay'
-        );
-
-
-    const currentValue =
-        Number(
-            document.getElementById(
-                'numInput'
-            ).value
-            .replace(/,/g, '')
-        ) || 0;
-
-
-    document.getElementById(
-        'historyCurrentValue'
-    ).textContent =
-        formatNumber(
-            currentValue
-        );
-
-
-    overlay.classList.add(
-        'active'
-    );
-
-
-    document.getElementById(
-        'historyList'
-    ).innerHTML =
-        '<div class="history-loading">' +
-        'LOADING...' +
-        '</div>';
-
+async function loadValue() {
+    isLoading = true;
 
     try {
+        const snap = await getDoc(mainRef);
 
-        /*
-         * 念のため今月の履歴が無ければ
-         * ここでも作成する。
-         */
+        if (snap.exists()) {
+            lastValue = Number(snap.data().value) || 0;
+            updateProgress(lastValue, false);
+        } else {
+            updateProgress(0, false);
+        }
 
-        await saveMonthlySnapshot(
-            currentValue
-        );
-
-
-        const history =
-            await getHistoryData();
-
-
-        buildHistoryList(
-            history
-        );
-
-
-        drawHistoryChart(
-            history
-        );
-
-
+        /* 今日の履歴がまだ無ければ、今日の値を保存 */
+        await saveDailyHistory(lastValue);
     } catch (error) {
-
-        console.error(
-            "Failed to load history:",
-            error
-        );
-
-
-        document.getElementById(
-            'historyList'
-        ).innerHTML =
-            '<div class="history-empty">' +
-            'FAILED TO LOAD HISTORY' +
-            '</div>';
-
+        console.error("Firebase読み込みエラー:", error);
+        updateProgress(0, false);
+    } finally {
+        isLoading = false;
     }
-
 }
 
+async function loadHistory() {
+    const snapshot = await getDocs(historyCollection);
 
-/* =========================================
-   CLOSE HISTORY
-========================================= */
+    const records = [];
+    snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        if (data.date && Number.isFinite(Number(data.value))) {
+            records.push({
+                id: docSnap.id,
+                date: data.date,
+                value: Number(data.value)
+            });
+        }
+    });
+
+    records.sort((a, b) => a.date.localeCompare(b.date));
+    return records;
+}
+
+/* 長期間の記録を画面上だけ適度にまとめる */
+function aggregateRecords(records) {
+    if (records.length <= 31) return records;
+
+    const now = new Date();
+    const cutoffRecent = new Date(now);
+    cutoffRecent.setDate(cutoffRecent.getDate() - 31);
+
+    const recent = [];
+    const old = [];
+
+    for (const r of records) {
+        const [y,m,d] = r.date.split("-").map(Number);
+        const date = new Date(y, m - 1, d);
+        if (date >= cutoffRecent) recent.push(r);
+        else old.push(r);
+    }
+
+    if (old.length === 0) return recent;
+
+    const groups = new Map();
+
+    for (const r of old) {
+        const [y,m,d] = r.date.split("-").map(Number);
+        const date = new Date(y, m - 1, d);
+
+        let key;
+        if (records.length <= 120) {
+            const day = date.getDay();
+            const monday = new Date(date);
+            const diff = (day + 6) % 7;
+            monday.setDate(date.getDate() - diff);
+            key = getLocalDateKey(monday);
+        } else {
+            key = `${y}-${String(m).padStart(2,"0")}-01`;
+        }
+
+        groups.set(key, r);
+    }
+
+    return [...groups.values(), ...recent].sort((a,b) => a.date.localeCompare(b.date));
+}
+
+function niceStep(range) {
+    const raw = range / 5;
+    const power = Math.pow(10, Math.floor(Math.log10(raw)));
+    const normalized = raw / power;
+
+    let nice;
+    if (normalized <= 1) nice = 1;
+    else if (normalized <= 2) nice = 2;
+    else if (normalized <= 5) nice = 5;
+    else nice = 10;
+
+    return nice * power;
+}
+
+function drawChart(records) {
+    const canvas = document.getElementById("historyChart");
+    const empty = document.getElementById("chartEmpty");
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+
+    canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+    canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+
+    const ctx = canvas.getContext("2d");
+    ctx.scale(dpr, dpr);
+
+    const w = rect.width;
+    const h = rect.height;
+
+    ctx.clearRect(0, 0, w, h);
+
+    if (!records.length) {
+        empty.style.display = "flex";
+        return;
+    }
+
+    empty.style.display = "none";
+
+    const pad = { left: 68, right: 18, top: 20, bottom: 42 };
+    const chartW = Math.max(1, w - pad.left - pad.right);
+    const chartH = Math.max(1, h - pad.top - pad.bottom);
+
+    const values = records.map(r => r.value);
+    const minValue = Math.min(...values);
+    const maxValue = Math.max(...values);
+
+    let range = Math.max(1, maxValue - minValue);
+    const step = niceStep(range);
+    const axisMin = Math.max(0, Math.floor(minValue / step) * step);
+    let axisMax = Math.ceil(maxValue / step) * step;
+
+    if (axisMax <= axisMin) axisMax = axisMin + step;
+    const axisRange = axisMax - axisMin;
+
+    ctx.font = "11px Arial";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+
+    for (let v = axisMin; v <= axisMax + step * .001; v += step) {
+        const y = pad.top + chartH - ((v - axisMin) / axisRange) * chartH;
+
+        ctx.strokeStyle = "rgba(255,255,255,.08)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, y);
+        ctx.lineTo(w - pad.right, y);
+        ctx.stroke();
+
+        ctx.fillStyle = "rgba(255,255,255,.45)";
+        ctx.fillText(formatNumber(Math.round(v)), pad.left - 9, y);
+    }
+
+    const xFor = i => records.length === 1
+        ? pad.left + chartW / 2
+        : pad.left + (i / (records.length - 1)) * chartW;
+
+    const yFor = value =>
+        pad.top + chartH - ((value - axisMin) / axisRange) * chartH;
+
+    /* 線 */
+    ctx.beginPath();
+    records.forEach((r,i) => {
+        const x = xFor(i), y = yFor(r.value);
+        if (i === 0) ctx.moveTo(x,y);
+        else ctx.lineTo(x,y);
+    });
+    ctx.strokeStyle = "rgba(255,70,80,.95)";
+    ctx.lineWidth = 2.2;
+    ctx.shadowColor = "rgba(255,40,50,.35)";
+    ctx.shadowBlur = 8;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    /* 点 */
+    records.forEach((r,i) => {
+        const x = xFor(i), y = yFor(r.value);
+
+        ctx.beginPath();
+        ctx.arc(x,y,3.5,0,Math.PI*2);
+        ctx.fillStyle = "#ff4652";
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(x,y,6,0,Math.PI*2);
+        ctx.strokeStyle = "rgba(255,70,80,.22)";
+        ctx.stroke();
+    });
+
+    /* 横軸の日付。多すぎる場合は間引く */
+    const maxLabels = Math.max(2, Math.floor(chartW / 75));
+    const labelStep = Math.max(1, Math.ceil(records.length / maxLabels));
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillStyle = "rgba(255,255,255,.42)";
+    ctx.font = "10px Arial";
+
+    records.forEach((r,i) => {
+        if (i !== records.length - 1 && i % labelStep !== 0) return;
+
+        const x = xFor(i);
+        ctx.fillText(formatDate(r.date), x, pad.top + chartH + 12);
+    });
+}
+
+function renderHistoryList(records) {
+    const list = document.getElementById("historyList");
+    list.innerHTML = "";
+
+    const displayRecords = records.slice(-9).reverse();
+
+    for (const r of displayRecords) {
+        const row = document.createElement("div");
+        row.className = "history-row";
+
+        const date = document.createElement("span");
+        date.className = "history-date";
+        date.textContent = formatDate(r.date);
+
+        const value = document.createElement("span");
+        value.className = "history-value";
+        value.textContent = formatNumber(r.value);
+
+        const del = document.createElement("button");
+        del.className = "history-delete";
+        del.title = "この記録を削除";
+        del.textContent = "🗑";
+        del.addEventListener("click", async () => {
+            if (!confirm(`${formatDate(r.date)} の記録を削除しますか？`)) return;
+
+            try {
+                await deleteDoc(doc(db, "tracker", "history", r.id));
+                await refreshHistory();
+            } catch (error) {
+                console.error(error);
+                alert("削除できませんでした。");
+            }
+        });
+
+        row.append(date, value, del);
+        list.appendChild(row);
+    }
+}
+
+async function refreshHistory() {
+    const records = await loadHistory();
+    const displayRecords = aggregateRecords(records);
+
+    document.getElementById("historyCurrentValue").textContent = formatNumber(lastValue);
+    renderHistoryList(records);
+    requestAnimationFrame(() => drawChart(displayRecords));
+}
+
+function openHistory() {
+    document.getElementById("historyOverlay").classList.add("open");
+    refreshHistory().catch(err => {
+        console.error("履歴読み込みエラー:", err);
+    });
+}
 
 function closeHistory() {
-
-    document.getElementById(
-        'historyOverlay'
-    ).classList.remove(
-        'active'
-    );
-
-
-    /*
-     * コマンド入力後も現在値を
-     * 元の表示に戻す。
-     */
-
-    const input =
-        document.getElementById(
-            'numInput'
-        );
-
-
-    const currentValue =
-        Number(
-            input.value.replace(/,/g, '')
-        ) || 0;
-
-
-    input.value =
-        currentValue.toLocaleString();
-
+    document.getElementById("historyOverlay").classList.remove("open");
 }
 
+document.getElementById("numInput").addEventListener("keypress", function(e) {
+    if (e.key !== "Enter") return;
 
-/* =========================================
-   INPUT
-========================================= */
+    const raw = this.value.trim().toLowerCase();
 
-document
-    .getElementById('numInput')
-    .addEventListener(
-        'keypress',
-        function(e) {
-
-            if (e.key !== 'Enter') {
-
-                return;
-
-            }
-
-
-            const raw =
-                this.value
-                    .trim()
-                    .toLowerCase();
-
-
-            /*
-             * history / log は
-             * 統計画面を開くコマンド。
-             */
-
-            if (
-                raw === 'history' ||
-                raw === 'log'
-            ) {
-
-                e.preventDefault();
-
-                openHistory();
-
-                return;
-
-            }
-
-
-            updateProgress(true);
-
-        }
-    );
-
-
-/* =========================================
-   CLOSE EVENTS
-========================================= */
-
-document
-    .getElementById('historyClose')
-    .addEventListener(
-        'click',
-        closeHistory
-    );
-
-
-document
-    .getElementById('historyOverlay')
-    .addEventListener(
-        'click',
-        function(e) {
-
-            if (
-                e.target === this
-            ) {
-
-                closeHistory();
-
-            }
-
-        }
-    );
-
-
-document.addEventListener(
-    'keydown',
-    function(e) {
-
-        if (
-            e.key === 'Escape' &&
-            document
-                .getElementById(
-                    'historyOverlay'
-                )
-                .classList.contains(
-                    'active'
-                )
-        ) {
-
-            closeHistory();
-
-        }
-
+    if (raw === "history" || raw === "log") {
+        this.value = lastValue.toLocaleString();
+        openHistory();
+        return;
     }
-);
 
+    updateProgress();
+});
 
-/* =========================================
-   START
-========================================= */
+document.getElementById("historyClose").addEventListener("click", closeHistory);
+
+document.getElementById("historyOverlay").addEventListener("click", e => {
+    if (e.target === e.currentTarget) closeHistory();
+});
+
+document.addEventListener("keydown", e => {
+    if (e.key === "Escape") closeHistory();
+});
+
+window.addEventListener("resize", () => {
+    if (document.getElementById("historyOverlay").classList.contains("open")) {
+        refreshHistory().catch(console.error);
+    }
+});
 
 loadValue();
-
 </script>
-
 </body>
-
 </html>
+
