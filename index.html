@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 
 <head>
@@ -50,7 +49,10 @@ body::before {
 
     position: absolute;
 
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 
     background: rgba(0, 0, 0, 0.4);
 
@@ -134,7 +136,11 @@ svg {
 
     stroke-dashoffset: 628.318;
 
-    transition: stroke-dashoffset 1.2s cubic-bezier(0.19, 1, 0.22, 1), stroke 0.4s ease, filter 0.4s ease, opacity 0.3s ease;
+    transition:
+        stroke-dashoffset 1.2s cubic-bezier(0.19, 1, 0.22, 1),
+        stroke 0.4s ease,
+        filter 0.4s ease,
+        opacity 0.3s ease;
 
     opacity: 1;
 
@@ -255,9 +261,8 @@ svg {
     letter-spacing: 1px;
 
     transition: color 0.4s ease, text-shadow 0.4s ease;
+
 }
-
-
 
 .center-remaining-label {
 
@@ -285,11 +290,498 @@ svg {
 
 }
 
+
+/* =========================================
+   STATISTICS OVERLAY
+========================================= */
+
+#historyOverlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 100;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.82);
+
+    backdrop-filter: blur(12px);
+
+    -webkit-backdrop-filter: blur(12px);
+
+    padding: 30px;
+
+    box-sizing: border-box;
+
+}
+
+#historyOverlay.active {
+
+    display: flex;
+
+}
+
+.history-panel {
+
+    position: relative;
+
+    width: min(900px, 100%);
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    box-sizing: border-box;
+
+    padding: 42px 45px 45px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(25, 27, 32, 0.94),
+            rgba(8, 9, 12, 0.96)
+        );
+
+    border: 1px solid rgba(255,255,255,0.13);
+
+    box-shadow:
+        0 30px 100px rgba(0,0,0,0.8),
+        0 0 80px rgba(0,195,255,0.06);
+
+    color: white;
+
+}
+
+.history-panel::before {
+
+    content: '';
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(0,195,255,0.7),
+            transparent
+        );
+
+}
+
+.history-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    margin-bottom: 35px;
+
+}
+
+.history-title {
+
+    font-family: 'Oswald', sans-serif;
+
+    font-size: 30px;
+
+    font-weight: 700;
+
+    letter-spacing: 5px;
+
+    margin: 0;
+
+}
+
+.history-subtitle {
+
+    font-family: 'Oswald', sans-serif;
+
+    font-size: 10px;
+
+    letter-spacing: 4px;
+
+    color: rgba(255,255,255,0.35);
+
+    margin-top: 7px;
+
+}
+
+.history-close {
+
+    width: 38px;
+
+    height: 38px;
+
+    border: 1px solid rgba(255,255,255,0.15);
+
+    background: rgba(255,255,255,0.04);
+
+    color: rgba(255,255,255,0.65);
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease;
+
+}
+
+.history-close:hover {
+
+    color: white;
+
+    border-color: rgba(0,195,255,0.7);
+
+    box-shadow: 0 0 20px rgba(0,195,255,0.25);
+
+}
+
+.history-current {
+
+    display: flex;
+
+    align-items: baseline;
+
+    gap: 15px;
+
+    margin-bottom: 35px;
+
+}
+
+.history-current-label {
+
+    font-family: 'Oswald', sans-serif;
+
+    font-size: 10px;
+
+    letter-spacing: 4px;
+
+    color: rgba(255,255,255,0.35);
+
+}
+
+.history-current-value {
+
+    font-family: 'Oswald', sans-serif;
+
+    font-size: 38px;
+
+    font-weight: 700;
+
+}
+
+.history-chart-title {
+
+    font-family: 'Oswald', sans-serif;
+
+    font-size: 11px;
+
+    letter-spacing: 4px;
+
+    color: rgba(255,255,255,0.45);
+
+    margin-bottom: 12px;
+
+}
+
+.history-chart {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 280px;
+
+    margin-bottom: 40px;
+
+    border-left: 1px solid rgba(255,255,255,0.1);
+
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.035) 1px,
+            transparent 1px
+        );
+
+    background-size: 100% 25%;
+
+}
+
+#historyChartSvg {
+
+    width: 100%;
+
+    height: 100%;
+
+    overflow: visible;
+
+}
+
+.history-line {
+
+    fill: none;
+
+    stroke: #00c3ff;
+
+    stroke-width: 2.5;
+
+    filter: drop-shadow(0 0 7px rgba(0,195,255,0.8));
+
+}
+
+.history-area {
+
+    fill: url(#historyGradient);
+
+    opacity: 0.18;
+
+}
+
+.history-point {
+
+    fill: #101216;
+
+    stroke: #00c3ff;
+
+    stroke-width: 2;
+
+    filter: drop-shadow(0 0 5px rgba(0,195,255,0.7));
+
+}
+
+.history-label {
+
+    font-family: 'Oswald', sans-serif;
+
+    font-size: 9px;
+
+    fill: rgba(255,255,255,0.4);
+
+}
+
+.history-value-label {
+
+    font-family: 'Oswald', sans-serif;
+
+    font-size: 9px;
+
+    fill: rgba(255,255,255,0.65);
+
+}
+
+.history-list-title {
+
+    font-family: 'Oswald', sans-serif;
+
+    font-size: 11px;
+
+    letter-spacing: 4px;
+
+    color: rgba(255,255,255,0.45);
+
+    margin-bottom: 12px;
+
+}
+
+.history-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 1px;
+
+}
+
+.history-row {
+
+    display: grid;
+
+    grid-template-columns: 110px 1fr auto;
+
+    align-items: center;
+
+    min-height: 52px;
+
+    padding: 0 15px;
+
+    background: rgba(255,255,255,0.035);
+
+    border-left: 2px solid rgba(0,195,255,0.25);
+
+    box-sizing: border-box;
+
+}
+
+.history-row:hover {
+
+    background: rgba(0,195,255,0.06);
+
+    border-left-color: rgba(0,195,255,0.8);
+
+}
+
+.history-month {
+
+    font-family: 'Oswald', sans-serif;
+
+    font-size: 12px;
+
+    letter-spacing: 2px;
+
+    color: rgba(255,255,255,0.5);
+
+}
+
+.history-total {
+
+    font-family: 'Oswald', sans-serif;
+
+    font-size: 17px;
+
+    text-align: right;
+
+}
+
+.history-increase {
+
+    min-width: 110px;
+
+    text-align: right;
+
+    font-family: 'Oswald', sans-serif;
+
+    font-size: 14px;
+
+    color: #00c3ff;
+
+}
+
+.history-increase.first {
+
+    color: rgba(255,255,255,0.25);
+
+}
+
+.history-empty {
+
+    padding: 40px 20px;
+
+    text-align: center;
+
+    font-family: 'Oswald', sans-serif;
+
+    letter-spacing: 3px;
+
+    color: rgba(255,255,255,0.3);
+
+}
+
+.history-loading {
+
+    padding: 80px 20px;
+
+    text-align: center;
+
+    font-family: 'Oswald', sans-serif;
+
+    letter-spacing: 4px;
+
+    color: rgba(255,255,255,0.4);
+
+}
+
+
+/* iPad / small screen */
+
+@media (max-width: 650px) {
+
+    #historyOverlay {
+
+        padding: 12px;
+
+    }
+
+    .history-panel {
+
+        max-height: 94vh;
+
+        padding: 30px 22px 30px;
+
+    }
+
+    .history-title {
+
+        font-size: 24px;
+
+        letter-spacing: 3px;
+
+    }
+
+    .history-current-value {
+
+        font-size: 30px;
+
+    }
+
+    .history-chart {
+
+        height: 220px;
+
+    }
+
+    .history-row {
+
+        grid-template-columns: 75px 1fr auto;
+
+        padding: 0 9px;
+
+    }
+
+    .history-month {
+
+        font-size: 10px;
+
+    }
+
+    .history-total {
+
+        font-size: 14px;
+
+    }
+
+    .history-increase {
+
+        min-width: 85px;
+
+        font-size: 12px;
+
+    }
+
+}
+
 </style>
 
 </head>
 
 <body>
+
 
 <div class="container">
 
@@ -297,251 +789,1349 @@ svg {
 
         <svg>
 
-            <circle class="circle-bg" id="circleBg" cx="120" cy="120" r="100"></circle>
+            <circle
+                class="circle-bg"
+                id="circleBg"
+                cx="120"
+                cy="120"
+                r="100">
+            </circle>
 
-            <circle class="circle-progress" id="progressCircle" cx="120" cy="120" r="100"></circle>
+            <circle
+                class="circle-progress"
+                id="progressCircle"
+                cx="120"
+                cy="120"
+                r="100">
+            </circle>
 
         </svg>
 
-       <div class="center-text">
+        <div class="center-text">
 
-    <div class="current-percent" id="percentText">0.0%</div>
+            <div
+                class="current-percent"
+                id="percentText">
+                0.0%
+            </div>
 
-    <div class="label">進捗</div>
+            <div class="label">
+                進捗
+            </div>
 
-    <div class="center-remaining-label">
+            <div class="center-remaining-label">
+                REMAINING
+            </div>
 
-        REMAINING
+            <div
+                class="center-remaining"
+                id="remainingCenter">
+                660,000
+            </div>
+
+        </div>
 
     </div>
 
-    <div class="center-remaining" id="remainingCenter">
 
-    660,000
+    <div class="stats">
 
-</div>
+        <input
+            type="text"
+            id="numInput"
+            value="0"
+            autocomplete="off">
 
-</div>   <!-- center-text -->
+        <span>/</span>
 
-</div>   <!-- circle-container -->
+        <span>660,000</span>
 
-<div class="stats">
-
-    <input type="text" id="numInput" value="0">
-
-    <span>/</span>
-
-    <span>660,000</span>
+    </div>
 
 </div>
 
-    
+
+<!-- =========================================
+     STATISTICS OVERLAY
+========================================= -->
+
+<div id="historyOverlay">
+
+    <div class="history-panel">
+
+        <div class="history-header">
+
+            <div>
+
+                <h1 class="history-title">
+                    MONTHLY STATISTICS
+                </h1>
+
+                <div class="history-subtitle">
+                    ENDFIELD TRACKER / PROGRESS HISTORY
+                </div>
+
+            </div>
+
+            <button
+                class="history-close"
+                id="historyClose"
+                aria-label="Close">
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="history-current">
+
+            <span class="history-current-label">
+                CURRENT
+            </span>
+
+            <span
+                class="history-current-value"
+                id="historyCurrentValue">
+                0
+            </span>
+
+        </div>
+
+
+        <div class="history-chart-title">
+            PROGRESS
+        </div>
+
+        <div class="history-chart">
+
+            <svg
+                id="historyChartSvg"
+                viewBox="0 0 800 280"
+                preserveAspectRatio="none">
+
+                <defs>
+
+                    <linearGradient
+                        id="historyGradient"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1">
+
+                        <stop
+                            offset="0%"
+                            stop-color="#00c3ff"
+                            stop-opacity="0.7">
+                        </stop>
+
+                        <stop
+                            offset="100%"
+                            stop-color="#00c3ff"
+                            stop-opacity="0">
+                        </stop>
+
+                    </linearGradient>
+
+                </defs>
+
+                <path
+                    id="historyArea"
+                    class="history-area">
+                </path>
+
+                <path
+                    id="historyLine"
+                    class="history-line">
+                </path>
+
+                <g id="historyPoints"></g>
+
+                <g id="historyLabels"></g>
+
+            </svg>
+
+        </div>
+
+
+        <div class="history-list-title">
+            MONTHLY INCREASE
+        </div>
+
+        <div
+            class="history-list"
+            id="historyList">
+
+            <div class="history-loading">
+                LOADING...
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
+
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+import {
+    getFirestore,
+    doc,
+    setDoc,
+    getDoc,
+    collection,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
 
 const GOAL = 660000;
 
-const CIRCUMFERENCE = 2 * Math.PI * 100; // 628.318
+const CIRCUMFERENCE = 2 * Math.PI * 100;
 
 
+const firebaseConfig = {
 
-function updateProgress() {
+    apiKey: "AIzaSyAVh5-phw8hBmgqNpchlUbOmvPjF-B1F7M",
+
+    authDomain: "arknights-endfield-tracker.firebaseapp.com",
+
+    projectId: "arknights-endfield-tracker",
+
+    storageBucket: "arknights-endfield-tracker.firebasestorage.app",
+
+    messagingSenderId: "1098323392414",
+
+    appId: "1:1098323392414:web:c804d5beb53a3280b1888f"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+/* =========================================
+   CURRENT VALUE
+========================================= */
+
+async function saveValue(value) {
+
+    try {
+
+        await setDoc(
+            doc(db, "tracker", "main"),
+            {
+                value: value
+            }
+        );
+
+    } catch (error) {
+
+        console.error("Failed to save value:", error);
+
+    }
+
+}
+
+
+function updateProgress(shouldSave = true) {
 
     const input = document.getElementById('numInput');
 
-    let expression = input.value.replace(/,/g, '').trim();
+    let expression = input.value
+        .replace(/,/g, '')
+        .trim();
+
 
     let value = expression
-        .split(/[\s+]+/)   // スペースまたは + で分割
-        .reduce((sum, n) => sum + (parseInt(n) || 0), 0);
-    
+        .split(/[\s+]+/)
+        .reduce(
+            (sum, n) => sum + (parseInt(n) || 0),
+            0
+        );
+
 
     const ratio = value / GOAL;
 
     const remaining = GOAL - value;
 
 
-
     let percentStr = "";
+
 
     if (value < GOAL) {
 
-        percentStr = (Math.floor((value / GOAL) * 1000) / 10).toFixed(1);
+        percentStr =
+            (
+                Math.floor(
+                    (value / GOAL) * 1000
+                ) / 10
+            ).toFixed(1);
 
     } else {
 
-        percentStr = (ratio * 100).toFixed(1);
+        percentStr =
+            (ratio * 100).toFixed(1);
 
     }
 
 
-
     let visualRatio = ratio % 1;
 
-    if (ratio > 0 && visualRatio === 0) {
+
+    if (
+        ratio > 0 &&
+        visualRatio === 0
+    ) {
 
         visualRatio = 1;
 
     }
 
-    
 
-    let offset = CIRCUMFERENCE - (visualRatio * CIRCUMFERENCE);
+    let offset =
+        CIRCUMFERENCE -
+        (visualRatio * CIRCUMFERENCE);
 
 
+    /* 99.9%の時だけ、ほんの少し隙間を残す */
 
-    // 99.9%の時だけ、ほんの少し隙間を残す
-if (percentStr === "99.9") {
+    if (percentStr === "99.9") {
 
-    offset = 1;
-
-}
-
-    const circleBg = document.getElementById('circleBg');
-
-    let hue = 0;
-
-    
-
-    if (ratio <= 1) {
-
-        circleBg.style.stroke = 'rgba(255, 255, 255, 0.08)';
-
-        circleBg.style.filter = 'none';
-
-        hue = 360 - (ratio * 165); 
-
-    } else {
-
-        circleBg.style.stroke = 'rgba(0, 195, 255, 0.25)'; 
-
-        circleBg.style.filter = 'drop-shadow(0 0 6px rgba(0, 195, 255, 0.3))';
-
-        const overflowRatio = Math.min(ratio - 1, 1); 
-
-        hue = 145 - (overflowRatio * 80);
+        offset = 1;
 
     }
 
-    
 
-    const currentHSL = 'hsl(' + hue + ', 100%, 55%)';
+    const circleBg =
+        document.getElementById('circleBg');
 
 
+    let hue = 0;
 
-    const progressCircle = document.getElementById('progressCircle');
 
-    const percentText = document.getElementById('percentText');
+    if (ratio <= 1) {
 
-    const remainingCenter = document.getElementById('remainingCenter');
-    
+        circleBg.style.stroke =
+            'rgba(255, 255, 255, 0.08)';
+
+        circleBg.style.filter =
+            'none';
+
+        hue =
+            360 - (ratio * 165);
+
+    } else {
+
+        circleBg.style.stroke =
+            'rgba(0, 195, 255, 0.25)';
+
+        circleBg.style.filter =
+            'drop-shadow(0 0 6px rgba(0, 195, 255, 0.3))';
+
+        const overflowRatio =
+            Math.min(ratio - 1, 1);
+
+        hue =
+            145 - (overflowRatio * 80);
+
+    }
+
+
+    const currentHSL =
+        'hsl(' +
+        hue +
+        ', 100%, 55%)';
+
+
+    const progressCircle =
+        document.getElementById(
+            'progressCircle'
+        );
+
+    const percentText =
+        document.getElementById(
+            'percentText'
+        );
+
+    const remainingCenter =
+        document.getElementById(
+            'remainingCenter'
+        );
 
 
     if (value === 0) {
 
-        progressCircle.style.opacity = '0';
+        progressCircle.style.opacity =
+            '0';
 
     } else {
 
-        progressCircle.style.opacity = '1';
+        progressCircle.style.opacity =
+            '1';
 
     }
 
 
+    progressCircle.style.strokeDashoffset =
+        offset;
 
-    progressCircle.style.strokeDashoffset = offset;
+    progressCircle.style.stroke =
+        currentHSL;
 
-    progressCircle.style.stroke = currentHSL;
-
-    progressCircle.style.filter = 'drop-shadow(0 0 15px ' + currentHSL + ')';
-
-
-
-    percentText.innerText = percentStr + '%';
-
-    percentText.style.color = currentHSL;
-
-    percentText.style.filter = 'drop-shadow(0 0 10px ' + currentHSL + ')';
-
-    
-
- input.value = value.toLocaleString();
- input.style.color = currentHSL;
- input.style.textShadow = '0 0 10px ' + currentHSL;
- saveValue(value);
- 
+    progressCircle.style.filter =
+        'drop-shadow(0 0 15px ' +
+        currentHSL +
+        ')';
 
 
+    percentText.innerText =
+        percentStr + '%';
 
-if (remaining <= 0) {
+    percentText.style.color =
+        currentHSL;
 
-    remainingCenter.innerText = '完凸可能';
-    remainingCenter.style.color = currentHSL;
-    remainingCenter.style.textShadow = '0 0 15px ' + currentHSL;
-
-} else {
-
-    remainingCenter.innerText = remaining.toLocaleString();
-    remainingCenter.style.color = currentHSL;
-    remainingCenter.style.textShadow = '0 0 10px ' + currentHSL;
-
-}
-}
+    percentText.style.filter =
+        'drop-shadow(0 0 10px ' +
+        currentHSL +
+        ')';
 
 
+    input.value =
+        value.toLocaleString();
 
-document.getElementById('numInput').addEventListener('keypress', function(e) {
+    input.style.color =
+        currentHSL;
 
-    if (e.key === 'Enter') {
+    input.style.textShadow =
+        '0 0 10px ' +
+        currentHSL;
 
-        updateProgress();
-	
+
+    if (remaining <= 0) {
+
+        remainingCenter.innerText =
+            '完凸可能';
+
+        remainingCenter.style.color =
+            currentHSL;
+
+        remainingCenter.style.textShadow =
+            '0 0 15px ' +
+            currentHSL;
+
+    } else {
+
+        remainingCenter.innerText =
+            remaining.toLocaleString();
+
+        remainingCenter.style.color =
+            currentHSL;
+
+        remainingCenter.style.textShadow =
+            '0 0 10px ' +
+            currentHSL;
 
     }
 
-});
 
-const firebaseConfig = {
+    if (shouldSave) {
 
-  apiKey: "AIzaSyAVh5-phw8hBmgqNpchlUbOmvPjF-B1F7M",
+        saveValue(value);
 
-  authDomain: "arknights-endfield-tracker.firebaseapp.com",
+    }
 
-  projectId: "arknights-endfield-tracker",
 
-  storageBucket: "arknights-endfield-tracker.firebasestorage.app",
+    return value;
 
-  messagingSenderId: "1098323392414",
-
-  appId: "1:1098323392414:web:c804d5beb53a3280b1888f"
-
-};
-
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
-
-async function saveValue(value) {
-    await setDoc(doc(db, "tracker", "main"), {
-        value: value
-    });
 }
+
+
+/* =========================================
+   MONTHLY BACKUP
+========================================= */
+
+function getCurrentMonthKey() {
+
+    const now = new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(2, '0');
+
+    return `${year}-${month}`;
+
+}
+
+
+async function saveMonthlySnapshot(value) {
+
+    const monthKey =
+        getCurrentMonthKey();
+
+
+    const historyRef =
+        doc(
+            db,
+            "history",
+            monthKey
+        );
+
+
+    try {
+
+        const existing =
+            await getDoc(historyRef);
+
+
+        /*
+         * その月の履歴が既に存在するなら
+         * 上書きしない。
+         *
+         * 「その月に最初にサイトを開いた時」
+         * の値を保存する。
+         */
+
+        if (existing.exists()) {
+
+            return;
+
+        }
+
+
+        await setDoc(
+            historyRef,
+            {
+                value: value,
+                month: monthKey,
+                savedAt: new Date().toISOString()
+            }
+        );
+
+
+        console.log(
+            "Monthly snapshot saved:",
+            monthKey,
+            value
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Failed to save monthly snapshot:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   LOAD CURRENT VALUE
+========================================= */
 
 async function loadValue() {
-    const snap = await getDoc(doc(db, "tracker", "main"));
 
-    if (snap.exists()) {
-        document.getElementById('numInput').value = snap.data().value;
+    try {
+
+        const snap =
+            await getDoc(
+                doc(db, "tracker", "main")
+            );
+
+
+        let value = 0;
+
+
+        if (snap.exists()) {
+
+            value =
+                Number(
+                    snap.data().value
+                ) || 0;
+
+            document.getElementById(
+                'numInput'
+            ).value = value;
+
+        }
+
+
+        /*
+         * 読み込み時はFirestoreへ
+         * 再保存しない。
+         */
+
+        updateProgress(false);
+
+
+        /*
+         * 現在値を読み込んだ後に
+         * 月次バックアップを確認。
+         */
+
+        await saveMonthlySnapshot(value);
+
+    } catch (error) {
+
+        console.error(
+            "Failed to load value:",
+            error
+        );
+
     }
 
-    updateProgress();
 }
+
+
+/* =========================================
+   HISTORY DATA
+========================================= */
+
+async function getHistoryData() {
+
+    const snapshot =
+        await getDocs(
+            collection(db, "history")
+        );
+
+
+    const history = [];
+
+
+    snapshot.forEach((docSnap) => {
+
+        const data =
+            docSnap.data();
+
+
+        if (
+            typeof data.value === 'number' &&
+            data.month
+        ) {
+
+            history.push({
+
+                month: data.month,
+
+                value: data.value
+
+            });
+
+        }
+
+    });
+
+
+    history.sort(
+        (a, b) =>
+            a.month.localeCompare(b.month)
+    );
+
+
+    return history;
+
+}
+
+
+/* =========================================
+   FORMAT
+========================================= */
+
+function formatNumber(value) {
+
+    return Number(value)
+        .toLocaleString();
+
+}
+
+
+function formatIncrease(value) {
+
+    if (value > 0) {
+
+        return '+' +
+            formatNumber(value);
+
+    }
+
+    if (value === 0) {
+
+        return '±0';
+
+    }
+
+    return formatNumber(value);
+
+}
+
+
+/* =========================================
+   DRAW GRAPH
+========================================= */
+
+function drawHistoryChart(history) {
+
+    const svg =
+        document.getElementById(
+            'historyChartSvg'
+        );
+
+    const line =
+        document.getElementById(
+            'historyLine'
+        );
+
+    const area =
+        document.getElementById(
+            'historyArea'
+        );
+
+    const pointsGroup =
+        document.getElementById(
+            'historyPoints'
+        );
+
+    const labelsGroup =
+        document.getElementById(
+            'historyLabels'
+        );
+
+
+    line.setAttribute(
+        'd',
+        ''
+    );
+
+    area.setAttribute(
+        'd',
+        ''
+    );
+
+    pointsGroup.innerHTML = '';
+
+    labelsGroup.innerHTML = '';
+
+
+    if (history.length === 0) {
+
+        return;
+
+    }
+
+
+    const width = 800;
+
+    const height = 280;
+
+
+    const paddingLeft = 25;
+
+    const paddingRight = 25;
+
+    const paddingTop = 30;
+
+    const paddingBottom = 35;
+
+
+    const graphWidth =
+        width -
+        paddingLeft -
+        paddingRight;
+
+    const graphHeight =
+        height -
+        paddingTop -
+        paddingBottom;
+
+
+    const values =
+        history.map(
+            item => item.value
+        );
+
+
+    let minValue =
+        Math.min(...values);
+
+    let maxValue =
+        Math.max(...values);
+
+
+    /*
+     * 値が全部同じ場合でも
+     * グラフが表示されるようにする。
+     */
+
+    if (minValue === maxValue) {
+
+        minValue -= 1;
+
+        maxValue += 1;
+
+    }
+
+
+    const range =
+        maxValue - minValue;
+
+
+    const points =
+        history.map(
+            (item, index) => {
+
+                const x =
+                    history.length === 1
+                    ? width / 2
+                    : paddingLeft +
+                      (
+                        index /
+                        (history.length - 1)
+                      ) *
+                      graphWidth;
+
+
+                const y =
+                    paddingTop +
+                    (
+                        1 -
+                        (
+                            (item.value - minValue) /
+                            range
+                        )
+                    ) *
+                    graphHeight;
+
+
+                return {
+                    x,
+                    y,
+                    value: item.value,
+                    month: item.month
+                };
+
+            }
+        );
+
+
+    const linePath =
+        points
+            .map(
+                (point, index) =>
+                    (
+                        index === 0
+                        ? 'M'
+                        : 'L'
+                    ) +
+                    ' ' +
+                    point.x +
+                    ' ' +
+                    point.y
+            )
+            .join(' ');
+
+
+    line.setAttribute(
+        'd',
+        linePath
+    );
+
+
+    const areaPath =
+        linePath +
+        ' L ' +
+        points[points.length - 1].x +
+        ' ' +
+        (height - paddingBottom) +
+        ' L ' +
+        points[0].x +
+        ' ' +
+        (height - paddingBottom) +
+        ' Z';
+
+
+    area.setAttribute(
+        'd',
+        areaPath
+    );
+
+
+    points.forEach(
+        (point, index) => {
+
+            const circle =
+                document.createElementNS(
+                    'http://www.w3.org/2000/svg',
+                    'circle'
+                );
+
+
+            circle.setAttribute(
+                'class',
+                'history-point'
+            );
+
+            circle.setAttribute(
+                'cx',
+                point.x
+            );
+
+            circle.setAttribute(
+                'cy',
+                point.y
+            );
+
+            circle.setAttribute(
+                'r',
+                4
+            );
+
+
+            pointsGroup.appendChild(
+                circle
+            );
+
+
+            const monthLabel =
+                document.createElementNS(
+                    'http://www.w3.org/2000/svg',
+                    'text'
+                );
+
+
+            monthLabel.setAttribute(
+                'class',
+                'history-label'
+            );
+
+            monthLabel.setAttribute(
+                'x',
+                point.x
+            );
+
+            monthLabel.setAttribute(
+                'y',
+                height - 10
+            );
+
+            monthLabel.setAttribute(
+                'text-anchor',
+                'middle'
+            );
+
+
+            monthLabel.textContent =
+                point.month;
+
+
+            labelsGroup.appendChild(
+                monthLabel
+            );
+
+
+            const valueLabel =
+                document.createElementNS(
+                    'http://www.w3.org/2000/svg',
+                    'text'
+                );
+
+
+            valueLabel.setAttribute(
+                'class',
+                'history-value-label'
+            );
+
+            valueLabel.setAttribute(
+                'x',
+                point.x
+            );
+
+            valueLabel.setAttribute(
+                'y',
+                point.y - 12
+            );
+
+            valueLabel.setAttribute(
+                'text-anchor',
+                'middle'
+            );
+
+
+            valueLabel.textContent =
+                formatNumber(
+                    point.value
+                );
+
+
+            labelsGroup.appendChild(
+                valueLabel
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   BUILD HISTORY LIST
+========================================= */
+
+function buildHistoryList(history) {
+
+    const list =
+        document.getElementById(
+            'historyList'
+        );
+
+
+    list.innerHTML = '';
+
+
+    if (history.length === 0) {
+
+        list.innerHTML =
+            '<div class="history-empty">' +
+            'NO HISTORY DATA' +
+            '</div>';
+
+        return;
+
+    }
+
+
+    history.forEach(
+        (item, index) => {
+
+            const row =
+                document.createElement(
+                    'div'
+                );
+
+            row.className =
+                'history-row';
+
+
+            const month =
+                document.createElement(
+                    'div'
+                );
+
+            month.className =
+                'history-month';
+
+            month.textContent =
+                item.month;
+
+
+            const total =
+                document.createElement(
+                    'div'
+                );
+
+            total.className =
+                'history-total';
+
+            total.textContent =
+                formatNumber(
+                    item.value
+                );
+
+
+            const increase =
+                document.createElement(
+                    'div'
+                );
+
+            increase.className =
+                'history-increase';
+
+
+            if (index === 0) {
+
+                increase.classList.add(
+                    'first'
+                );
+
+                increase.textContent =
+                    '—';
+
+            } else {
+
+                const difference =
+                    item.value -
+                    history[index - 1].value;
+
+
+                increase.textContent =
+                    formatIncrease(
+                        difference
+                    );
+
+            }
+
+
+            row.appendChild(
+                month
+            );
+
+            row.appendChild(
+                total
+            );
+
+            row.appendChild(
+                increase
+            );
+
+
+            list.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   OPEN HISTORY
+========================================= */
+
+async function openHistory() {
+
+    const overlay =
+        document.getElementById(
+            'historyOverlay'
+        );
+
+
+    const currentValue =
+        Number(
+            document.getElementById(
+                'numInput'
+            ).value
+            .replace(/,/g, '')
+        ) || 0;
+
+
+    document.getElementById(
+        'historyCurrentValue'
+    ).textContent =
+        formatNumber(
+            currentValue
+        );
+
+
+    overlay.classList.add(
+        'active'
+    );
+
+
+    document.getElementById(
+        'historyList'
+    ).innerHTML =
+        '<div class="history-loading">' +
+        'LOADING...' +
+        '</div>';
+
+
+    try {
+
+        /*
+         * 念のため今月の履歴が無ければ
+         * ここでも作成する。
+         */
+
+        await saveMonthlySnapshot(
+            currentValue
+        );
+
+
+        const history =
+            await getHistoryData();
+
+
+        buildHistoryList(
+            history
+        );
+
+
+        drawHistoryChart(
+            history
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Failed to load history:",
+            error
+        );
+
+
+        document.getElementById(
+            'historyList'
+        ).innerHTML =
+            '<div class="history-empty">' +
+            'FAILED TO LOAD HISTORY' +
+            '</div>';
+
+    }
+
+}
+
+
+/* =========================================
+   CLOSE HISTORY
+========================================= */
+
+function closeHistory() {
+
+    document.getElementById(
+        'historyOverlay'
+    ).classList.remove(
+        'active'
+    );
+
+
+    /*
+     * コマンド入力後も現在値を
+     * 元の表示に戻す。
+     */
+
+    const input =
+        document.getElementById(
+            'numInput'
+        );
+
+
+    const currentValue =
+        Number(
+            input.value.replace(/,/g, '')
+        ) || 0;
+
+
+    input.value =
+        currentValue.toLocaleString();
+
+}
+
+
+/* =========================================
+   INPUT
+========================================= */
+
+document
+    .getElementById('numInput')
+    .addEventListener(
+        'keypress',
+        function(e) {
+
+            if (e.key !== 'Enter') {
+
+                return;
+
+            }
+
+
+            const raw =
+                this.value
+                    .trim()
+                    .toLowerCase();
+
+
+            /*
+             * history / log は
+             * 統計画面を開くコマンド。
+             */
+
+            if (
+                raw === 'history' ||
+                raw === 'log'
+            ) {
+
+                e.preventDefault();
+
+                openHistory();
+
+                return;
+
+            }
+
+
+            updateProgress(true);
+
+        }
+    );
+
+
+/* =========================================
+   CLOSE EVENTS
+========================================= */
+
+document
+    .getElementById('historyClose')
+    .addEventListener(
+        'click',
+        closeHistory
+    );
+
+
+document
+    .getElementById('historyOverlay')
+    .addEventListener(
+        'click',
+        function(e) {
+
+            if (
+                e.target === this
+            ) {
+
+                closeHistory();
+
+            }
+
+        }
+    );
+
+
+document.addEventListener(
+    'keydown',
+    function(e) {
+
+        if (
+            e.key === 'Escape' &&
+            document
+                .getElementById(
+                    'historyOverlay'
+                )
+                .classList.contains(
+                    'active'
+                )
+        ) {
+
+            closeHistory();
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   START
+========================================= */
 
 loadValue();
 
@@ -549,5 +2139,4 @@ loadValue();
 
 </body>
 
-</html> 
-
+</html>
