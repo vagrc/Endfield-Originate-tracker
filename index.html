@@ -749,15 +749,18 @@ function closeHistory() {
 document.getElementById("numInput").addEventListener("keypress", function(e) {
     if (e.key !== "Enter") return;
 
-    const raw = this.value.trim().toLowerCase();
+const raw = this.value.trim().toLowerCase();
 
-    if (raw === "history" || raw === "log") {
-        this.value = lastValue.toLocaleString();
-        openHistory();
-        return;
-    }
+if (raw === "history" || raw === "log") {
+    this.value = lastValue.toLocaleString();
+    openHistory();
+    return;
+}
 
-    updateProgress();
+updateProgress();
+saveDailyHistory(lastValue).catch(err =>
+    console.error("履歴保存エラー:", err)
+);
 });
 
 document.getElementById("historyClose").addEventListener("click", closeHistory);
