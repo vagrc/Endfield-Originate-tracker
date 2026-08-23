@@ -786,6 +786,17 @@ function closeHistory() {
     document.getElementById("historyOverlay").classList.remove("open");
 }
 
+document.getElementById("numInput").addEventListener("input", function() {
+    const value = this.value;
+
+    // history / log は許可
+    if (/^(history|log)$/i.test(value)) {
+        return;
+    }
+
+    // 半角数字以外を削除
+    this.value = value.replace(/[^\d]/g, "");
+});    
 document.getElementById("numInput").addEventListener("keypress", function(e) {
     if (e.key !== "Enter") return;
 
