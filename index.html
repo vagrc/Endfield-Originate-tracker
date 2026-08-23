@@ -798,6 +798,17 @@ function updateProgress(valueOverride = null, shouldSave = true) {
     }
 
     const currentHSL = `hsl(${hue}, 100%, 55%)`;
+    const historyCurrent = document.querySelector(".history-current");
+const historyCurrentValue = document.getElementById("historyCurrentValue");
+
+if (historyCurrent) {
+    historyCurrent.style.color = currentHSL;
+}
+
+if (historyCurrentValue) {
+    historyCurrentValue.style.color = currentHSL;
+    historyCurrentValue.style.textShadow = `0 0 10px ${currentHSL}`;
+}
     const progressCircle = document.getElementById("progressCircle");
     const percentText = document.getElementById("percentText");
     const remainingCenter = document.getElementById("remainingCenter");
