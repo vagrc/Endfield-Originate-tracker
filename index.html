@@ -789,18 +789,25 @@ function closeHistory() {
 const numInput = document.getElementById("numInput");
 
 function normalizeInput(value) {
-    // 全角数字 → 半角数字
     value = value.replace(/[０-９]/g, c =>
         String.fromCharCode(c.charCodeAt(0) - 0xFEE0)
     );
 
-    // 数字とカンマ以外を削除
     value = value.replace(/[^\d,]/g, "");
 
     return value;
 }
 
-numInput.addEventListener("input", function() {
+numInput.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        this.value = normalizeInput(this.value);
+        updateProgress();
+        this.blur();
+    }
+});
+
+numInput.addEventListener("blur", function() {
     this.value = normalizeInput(this.value);
 });
 
