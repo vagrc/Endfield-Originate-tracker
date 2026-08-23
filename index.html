@@ -1017,6 +1017,64 @@ const tooltipValue = document.getElementById("chartTooltipValue");
         const x = xFor(i);
         ctx.fillText(formatDate(r.date), x, pad.top + chartH + 12);
     });
+    canvas.onmousemove = function(e) {
+    if (!records.length) return;
+
+    const rect = canvas.getBoundingClientRect();
+
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    let nearest = null;
+    let nearestDistance = Infinity;
+
+    records.forEach((r, i) => {
+        const x = xFor(i);
+        const y = yFor(r.value);
+
+        const distance = Math.hypot(
+            mouseX - x,
+            mouseY - y
+        );
+
+        if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearest = { r, x, y };
+        }
+    });
+
+    // 点から12px以内にいるときだけ表示
+    if (!nearest || nearestDistance > 12) {
+        tooltip.style.display = "none";
+        return;
+    }
+
+    tooltipDate.textContent = formatDate(nearest.r.date);
+    tooltipValue.textContent =
+        `${formatNumber(nearest.r.value)} 赤晶石`;
+
+    tooltip.style.display = "block";
+
+    let left = e.clientX + 14;
+    let top = e.clientY + 14;
+
+    const tooltipRect = tooltip.getBoundingClientRect();
+
+    if (left + tooltipRect.width > window.innerWidth - 10) {
+        left = e.clientX - tooltipRect.width - 14;
+    }
+
+    if (top + tooltipRect.height > window.innerHeight - 10) {
+        top = e.clientY - tooltipRect.height - 14;
+    }
+
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
+};
+
+canvas.onmouseleave = function() {
+    tooltip.style.display = "none";
+};
 }
 
 function renderHistoryList(records) {
