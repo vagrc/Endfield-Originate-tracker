@@ -775,11 +775,25 @@ async function refreshHistory() {
     requestAnimationFrame(() => drawChart(displayRecords));
 }
 
-function openHistory() {
-    document.getElementById("historyOverlay").classList.add("open");
-    refreshHistory().catch(err => {
-        console.error("履歴読み込みエラー:", err);
-    });
+async function openHistory() {
+    try {
+        const snap = await getDoc(mainRef);
+
+        if (snap.exists()) {
+            const saved = Number(snap.data().value) || 0;
+
+            savedValue = saved;
+            lastValue = saved;
+
+            updateProgress(saved, false);
+        }
+
+        document.getElementById("historyOverlay").classList.add("open");
+        await refreshHistory();
+
+    } catch (error) {
+        console.error("履歴読み込みエラー:", error);
+    }
 }
 
 function closeHistory() {
