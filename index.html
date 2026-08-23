@@ -403,8 +403,9 @@ const db = getFirestore(app);
 const mainRef = doc(db, "tracker", "main");
 const historyCollection = collection(db, "history");
 
-let isLoading = false;
+let isLoading = false; 
 let lastValue = 0;
+let savedValue = 0;
 
 function getLocalDateKey(date = new Date()) {
     const y = date.getFullYear();
@@ -522,12 +523,15 @@ async function loadValue() {
     try {
         const snap = await getDoc(mainRef);
 
-        if (snap.exists()) {
-            lastValue = Number(snap.data().value) || 0;
-            updateProgress(lastValue, false);
-        } else {
-            updateProgress(0, false);
-        }
+        if (snap.exists()) { 
+    savedValue = Number(snap.data().value) || 0;
+    lastValue = savedValue;
+    updateProgress(savedValue, false); 
+} else { 
+    savedValue = 0;
+    lastValue = 0;
+    updateProgress(0, false); 
+}
 
 
     } catch (error) {
@@ -797,10 +801,12 @@ if (raw === "history" || raw === "log") {
 
 updateProgress();
 });
-document.getElementById("saveButton").addEventListener("click", async () => {
-    try {
-        await saveValue(lastValue);
+document.getElementById("saveButton").addEventListener("click", async () => { 
+    try { 
+        await saveValue(lastValue); 
         await saveDailyHistory(lastValue);
+
+        savedValue = lastValue;
 
         const button = document.getElementById("saveButton");
         const originalText = button.textContent;
