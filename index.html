@@ -801,6 +801,15 @@ function normalizeInput(value) {
 numInput.addEventListener("keydown", function(e) {
     if (e.key === "Enter") {
         e.preventDefault();
+
+        const command = this.value.trim().toLowerCase();
+
+        if (command === "log" || command === "history") {
+            this.value = "";
+            openHistory();
+            return;
+        }
+
         this.value = normalizeInput(this.value);
         updateProgress();
         this.blur();
