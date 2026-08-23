@@ -512,9 +512,7 @@ function updateProgress(valueOverride = null, shouldSave = true) {
         remainingCenter.style.textShadow = `0 0 10px ${currentHSL}`;
     }
 
-    if (shouldSave && !isLoading) {
-        saveValue(value).catch(err => console.error("保存エラー:", err));
-    }
+    
 }
 
 async function loadValue() {
