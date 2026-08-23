@@ -831,7 +831,19 @@ numInput.addEventListener("keydown", function(e) {
 });
 
 numInput.addEventListener("blur", function() {
-    this.value = normalizeInput(this.value);
+    const value = this.value.trim();
+
+    if (value === "") {
+        this.value = lastValue.toLocaleString();
+        return;
+    }
+
+    if (!/^[0-9０-９,]+$/.test(value)) {
+        this.value = lastValue.toLocaleString();
+        return;
+    }
+
+    this.value = normalizeInput(value);
 });
 
 numInput.addEventListener("compositionend", function() {
