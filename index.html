@@ -1054,13 +1054,88 @@ function renderHistoryList(records) {
         list.appendChild(row);
     }
 }
+function renderMonthlyStats(records) {
+    const container = document.getElementById("monthlyStats");
+    container.innerHTML = "";
+
+    if (records.length < 2) {
+        const empty = document.createElement("div");
+        empty.className = "monthly-stats-empty";
+        empty.textContent = "月間統計を表示するには複数月の記録が必要です";
+        container.appendChild(empty);
+        return;
+    }
+
+    // 月ごとの「その月最後の記録」を取得
+    const monthlyLast = new Map();
+
+    for (const r of records) {
+        const [y, m] = r.date.split("-").map(Number);
+        const key = `${y}-${String(m).padStart(2, "0")}`;
+
+        monthlyLast.set(key, r);
+    }
+
+    const months = [...monthlyLast.entries()]
+        .sort((a, b) => a[0].localeCompare(b[0]));
+
+    if (months.length < 2) {
+        const empty = document.createElement("div");
+        empty.className = "monthly-stats-empty";
+        empty.textContent = "複数月の記録がありません";
+        container.appendChild(empty);
+        return;
+    }
+
+    // 「前月 → 今月」の差額を作る
+    for (let i = 1; i < months.length; i++) {
+        const [prevKey, prev] = months[i - 1];
+        const [currentKey, current] = months[i];
+
+        const change = current.value - prev.value;
+
+        const [prevY, prevM] = prevKey.split("-").map(Number);
+        const [currentY, currentM] = currentKey.split("-").map(Number);
+
+        const card = document.createElement("div");
+        card.className = "monthly-stat-card";
+
+        const period = document.createElement("div");
+        period.className = "monthly-stat-period";
+        period.textContent =
+            `${prevM}月～${currentM}月`;
+
+        const value = document.createElement("div");
+        value.className = "monthly-stat-value";
+
+        if (change > 0) {
+            value.classList.add("positive");
+            value.textContent = `＋${formatNumber(change)}`;
+        } else if (change < 0) {
+            value.classList.add("negative");
+            value.textContent = `−${formatNumber(Math.abs(change))}`;
+        } else {
+            value.classList.add("zero");
+            value.textContent = "±0";
+        }
+
+        card.append(period, value);
+        container.appendChild(card);
+    }
+
+    // 最新の月を右端に持っていく
+    container.scrollLeft = container.scrollWidth;
+}
 
 async function refreshHistory() {
     const records = await loadHistory();
     const displayRecords = aggregateRecords(records);
 
-    document.getElementById("historyCurrentValue").textContent = formatNumber(lastValue);
-    renderHistoryList(records);
+    document.getElementById("historyCurrentValue").textContent =
+        formatNumber(lastValue);
+
+    renderMonthlyStats(records);
+
     requestAnimationFrame(() => drawChart(displayRecords));
 }
 
