@@ -798,12 +798,7 @@ function updateProgress(valueOverride = null, shouldSave = true) {
     }
 
     const currentHSL = `hsl(${hue}, 100%, 55%)`;
-    const historyCurrent = document.querySelector(".history-current");
-const historyCurrentValue = document.getElementById("historyCurrentValue");
-
-if (historyCurrent) {
-    historyCurrent.style.color = currentHSL;
-}
+    const historyCurrentValue = document.getElementById("historyCurrentValue");
 
 if (historyCurrentValue) {
     historyCurrentValue.style.color = currentHSL;
