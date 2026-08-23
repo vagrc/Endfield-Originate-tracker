@@ -788,41 +788,23 @@ function closeHistory() {
 
 const numInput = document.getElementById("numInput");
 
-let isComposing = false;
-
-// 日本語IMEで入力中は邪魔しない
-numInput.addEventListener("compositionstart", () => {
-    isComposing = true;
-});
-
-numInput.addEventListener("compositionend", () => {
-    isComposing = false;
-
-    // 全角数字 → 半角数字
-    numInput.value = numInput.value.replace(/[０-９]/g, c =>
+function toHalfWidth(value) {
+    return value.replace(/[０-９]/g, c =>
         String.fromCharCode(c.charCodeAt(0) - 0xFEE0)
     );
-
-    // 数字とカンマ以外を削除
-    numInput.value = numInput.value.replace(/[^\d,]/g, "");
-});
+}
 
 numInput.addEventListener("input", function() {
-    // IME入力中は処理しない
-    if (isComposing) return;
-
-    // 全角数字を半角数字に変換
-    this.value = this.value.replace(/[０-９]/g, c =>
-        String.fromCharCode(c.charCodeAt(0) - 0xFEE0)
-    );
-
-    // 数字とカンマ以外は削除
-    this.value = this.value.replace(/[^\d,]/g, "");
+    this.value = toHalfWidth(this.value);
 });
 
-// Enterで確定
+numInput.addEventListener("compositionend", function() {
+    this.value = toHalfWidth(this.value);
+});
+
 numInput.addEventListener("keydown", function(e) {
     if (e.key === "Enter") {
+        this.value = toHalfWidth(this.value);
         updateProgress();
         this.blur();
     }
