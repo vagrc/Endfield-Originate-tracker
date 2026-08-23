@@ -1075,7 +1075,86 @@ document.getElementById("saveButton").addEventListener("click", async () => {
         alert("保存できませんでした。");
     }
 });
-    
+
+// ===== 保存済み履歴画面 =====
+
+async function openHistoryManager() {
+    const manager = document.getElementById("historyManager");
+    const list = document.getElementById("historyManagerList");
+
+    manager.classList.add("open");
+    list.innerHTML = "";
+
+    try {
+        const records = await loadHistory();
+
+        if (!records.length) {
+            const empty = document.createElement("div");
+            empty.className = "history-manager-empty";
+            empty.textContent = "保存済み履歴はありません";
+            list.appendChild(empty);
+            return;
+        }
+
+        // 新しい日付から順番に表示
+        records.reverse();
+
+        for (const r of records) {
+            const row = document.createElement("div");
+            row.className = "history-manager-row";
+
+            const date = document.createElement("span");
+            date.className = "history-manager-date";
+            date.textContent = formatDate(r.date);
+
+            const value = document.createElement("span");
+            value.className = "history-manager-value";
+            value.textContent = formatNumber(r.value);
+
+            const del = document.createElement("button");
+            del.className = "history-manager-delete";
+            del.textContent = "🗑";
+            del.title = "この履歴を削除";
+
+            del.addEventListener("click", async () => {
+                if (!confirm(`${formatDate(r.date)} の履歴を削除しますか？`)) {
+                    return;
+                }
+
+                try {
+                    await deleteDoc(doc(db, "history", r.id));
+                    await openHistoryManager();
+                    await refreshHistory();
+                } catch (error) {
+                    console.error("履歴削除エラー:", error);
+                    alert("履歴を削除できませんでした。");
+                }
+            });
+
+            row.append(date, value, del);
+            list.appendChild(row);
+        }
+
+    } catch (error) {
+        console.error("履歴一覧読み込みエラー:", error);
+        list.innerHTML = "";
+
+        const empty = document.createElement("div");
+        empty.className = "history-manager-empty";
+        empty.textContent = "履歴を読み込めませんでした";
+        list.appendChild(empty);
+    }
+}
+
+function closeHistoryManager() {
+    document.getElementById("historyManager").classList.remove("open");
+}
+
+// 🗑ボタン
+document.getElementById("historyTrash").addEventListener("click", openHistoryManager);
+
+// 保存済み履歴画面の×
+document.getElementById("historyManagerClose").addEventListener("click", closeHistoryManager);    
 document.getElementById("historyClose").addEventListener("click", closeHistory);
 
 document.getElementById("historyOverlay").addEventListener("click", e => {
