@@ -786,32 +786,46 @@ function closeHistory() {
     document.getElementById("historyOverlay").classList.remove("open");
 }
 
-document.getElementById("numInput").addEventListener("input", function() {
-    // 数字を入力している間はそのまま
-    // history / log も入力途中は許可
-    const value = this.value.toLowerCase();
+const numInput = document.getElementById("numInput");
 
-    if (value === "" || /^(history|log)?$/.test(value)) {
-        return;
-    }
+let isComposing = false;
 
-    // history / log ではない文字列は半角数字だけにする
-    if (!/^\d[\d,]*$/.test(value)) {
-        this.value = value.replace(/[^\d]/g, "");
-    }
+// 日本語IMEで入力中は邪魔しない
+numInput.addEventListener("compositionstart", () => {
+    isComposing = true;
 });
-document.getElementById("numInput").addEventListener("keypress", function(e) {
-    if (e.key !== "Enter") return;
 
-const raw = this.value.trim().toLowerCase();
+numInput.addEventListener("compositionend", () => {
+    isComposing = false;
 
-if (raw === "history" || raw === "log") {
-    this.value = lastValue.toLocaleString();
-    openHistory();
-    return;
-}
+    // 全角数字 → 半角数字
+    numInput.value = numInput.value.replace(/[０-９]/g, c =>
+        String.fromCharCode(c.charCodeAt(0) - 0xFEE0)
+    );
 
-updateProgress();
+    // 数字とカンマ以外を削除
+    numInput.value = numInput.value.replace(/[^\d,]/g, "");
+});
+
+numInput.addEventListener("input", function() {
+    // IME入力中は処理しない
+    if (isComposing) return;
+
+    // 全角数字を半角数字に変換
+    this.value = this.value.replace(/[０-９]/g, c =>
+        String.fromCharCode(c.charCodeAt(0) - 0xFEE0)
+    );
+
+    // 数字とカンマ以外は削除
+    this.value = this.value.replace(/[^\d,]/g, "");
+});
+
+// Enterで確定
+numInput.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        updateProgress();
+        this.blur();
+    }
 });
 document.getElementById("saveButton").addEventListener("click", async () => { 
     try { 
