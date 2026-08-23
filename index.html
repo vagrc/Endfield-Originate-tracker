@@ -322,6 +322,189 @@ svg { width: 100%; height: 100%; transform: rotate(-90deg); }
 #saveButton:active {
     background: rgba(255, 70, 80, 0.16);
 }
+/* ===== 履歴管理 ===== */
+
+.history-trash {
+width: 34px;
+height: 34px;
+margin-right: 8px;
+border: 1px solid rgba(255,70,80,.18);
+background: rgba(255,70,80,.035);
+color: rgba(255,120,130,.65);
+cursor: pointer;
+font-size: 16px;
+transition: all .25s ease;
+}
+
+.history-trash:hover {
+color: #ff4652;
+border-color: rgba(255,70,80,.5);
+background: rgba(255,70,80,.10);
+box-shadow: 0 0 14px rgba(255,50,60,.18);
+}
+
+.history-trash:active {
+background: rgba(255,70,80,.16);
+}
+
+/* 履歴管理画面 */
+
+.history-manager {
+position: fixed;
+inset: 0;
+z-index: 30;
+display: none;
+align-items: center;
+justify-content: center;
+padding: 14px;
+background: rgba(0,0,0,.88);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+}
+
+.history-manager.open {
+display: flex;
+}
+
+.history-manager-panel {
+width: min(560px, 100%);
+height: min(650px, calc(100vh - 28px));
+background: rgba(13,15,19,.98);
+border: 1px solid rgba(255,255,255,.14);
+box-shadow: 0 25px 80px rgba(0,0,0,.8);
+padding: 22px;
+display: flex;
+flex-direction: column;
+color: #fff;
+}
+
+.history-manager-head {
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex: 0 0 auto;
+}
+
+.history-manager-title {
+margin: 0;
+font-size: 26px;
+font-weight: 700;
+letter-spacing: .06em;
+color: rgba(255,255,255,.82);
+}
+
+.history-manager-close {
+width: 34px;
+height: 34px;
+border: 1px solid rgba(255,255,255,.16);
+background: rgba(255,255,255,.04);
+color: rgba(255,255,255,.7);
+cursor: pointer;
+font-size: 22px;
+line-height: 1;
+}
+
+.history-manager-close:hover {
+background: rgba(255,255,255,.1);
+}
+
+.history-manager-list {
+flex: 1 1 auto;
+overflow-y: auto;
+margin-top: 18px;
+padding-right: 4px;
+}
+
+.history-manager-list::-webkit-scrollbar {
+width: 5px;
+}
+
+.history-manager-list::-webkit-scrollbar-track {
+background: rgba(255,255,255,.03);
+}
+
+.history-manager-list::-webkit-scrollbar-thumb {
+background: rgba(255,255,255,.18);
+border-radius: 10px;
+}
+
+.history-manager-row {
+display: flex;
+align-items: center;
+min-height: 52px;
+padding: 8px 10px;
+margin-bottom: 7px;
+background: rgba(255,255,255,.035);
+border: 1px solid rgba(255,255,255,.07);
+}
+
+.history-manager-date {
+font-family: 'Oswald', sans-serif;
+font-size: 14px;
+color: rgba(255,255,255,.55);
+}
+
+.history-manager-value {
+margin-left: auto;
+margin-right: 16px;
+font-family: 'Oswald', sans-serif;
+font-size: 18px;
+color: rgba(255,255,255,.88);
+}
+
+.history-manager-delete {
+width: 34px;
+height: 34px;
+border: 1px solid rgba(255,70,80,.18);
+background: transparent;
+color: rgba(255,90,100,.65);
+cursor: pointer;
+font-size: 15px;
+transition: all .2s ease;
+}
+
+.history-manager-delete:hover {
+color: #ff4652;
+border-color: rgba(255,70,80,.55);
+background: rgba(255,70,80,.10);
+}
+
+.history-manager-empty {
+text-align: center;
+padding: 50px 10px;
+color: rgba(255,255,255,.28);
+font-size: 13px;
+}
+
+/* グラフのツールチップ */
+
+.chart-tooltip {
+position: fixed;
+z-index: 50;
+display: none;
+pointer-events: none;
+padding: 8px 11px;
+background: rgba(10,12,16,.94);
+border: 1px solid rgba(255,255,255,.15);
+box-shadow: 0 8px 25px rgba(0,0,0,.45);
+color: rgba(255,255,255,.88);
+font-family: "Helvetica Neue", Arial, sans-serif;
+font-size: 12px;
+line-height: 1.5;
+white-space: nowrap;
+}
+
+.chart-tooltip-date {
+color: rgba(255,255,255,.5);
+font-size: 10px;
+}
+
+.chart-tooltip-value {
+color: #fff;
+font-family: 'Oswald', sans-serif;
+font-size: 16px;
+}
+
 </style>
 </head>
 
