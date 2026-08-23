@@ -819,10 +819,9 @@ numInput.addEventListener("keydown", function(e) {
         const command = this.value.trim().toLowerCase();
 
         if (command === "log" || command === "history") {
-            this.value = "";
-            openHistory();
-            return;
-        }
+    openHistory();
+    return;
+}
 
         this.value = normalizeInput(this.value);
         updateProgress();
@@ -850,13 +849,7 @@ numInput.addEventListener("compositionend", function() {
     this.value = normalizeInput(this.value);
 });
 
-numInput.addEventListener("keydown", function(e) {
-    if (e.key === "Enter") {
-        this.value = normalizeInput(this.value);
-        updateProgress();
-        this.blur();
-    }
-});
+
 document.getElementById("saveButton").addEventListener("click", async () => { 
     try { 
         await saveValue(lastValue); 
