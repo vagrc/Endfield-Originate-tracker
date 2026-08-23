@@ -1058,52 +1058,54 @@ function renderMonthlyStats(records) {
     const container = document.getElementById("monthlyStats");
     container.innerHTML = "";
 
-    if (records.length < 2) {
+    if (records.length === 0) {
         const empty = document.createElement("div");
         empty.className = "monthly-stats-empty";
-        empty.textContent = "月間統計を表示するには複数月の記録が必要です";
+        empty.textContent = "記録がありません";
         container.appendChild(empty);
         return;
     }
 
-    // 月ごとの「その月最後の記録」を取得
-    const monthlyLast = new Map();
+    // 月ごとに記録をまとめる
+    const monthly = new Map();
 
     for (const r of records) {
         const [y, m] = r.date.split("-").map(Number);
         const key = `${y}-${String(m).padStart(2, "0")}`;
 
-        monthlyLast.set(key, r);
+        if (!monthly.has(key)) {
+            monthly.set(key, []);
+        }
+
+        monthly.get(key).push(r);
     }
 
-    const months = [...monthlyLast.entries()]
+    const months = [...monthly.entries()]
         .sort((a, b) => a[0].localeCompare(b[0]));
 
-    if (months.length < 2) {
-        const empty = document.createElement("div");
-        empty.className = "monthly-stats-empty";
-        empty.textContent = "複数月の記録がありません";
-        container.appendChild(empty);
-        return;
-    }
+    for (const [monthKey, monthRecords] of months) {
+        const first = monthRecords[0];
+        const last = monthRecords[monthRecords.length - 1];
 
-    // 「前月 → 今月」の差額を作る
-    for (let i = 1; i < months.length; i++) {
-        const [prevKey, prev] = months[i - 1];
-        const [currentKey, current] = months[i];
+        const change = last.value - first.value;
 
-        const change = current.value - prev.value;
-
-        const [prevY, prevM] = prevKey.split("-").map(Number);
-        const [currentY, currentM] = currentKey.split("-").map(Number);
+        const [year, month] = monthKey.split("-").map(Number);
 
         const card = document.createElement("div");
         card.className = "monthly-stat-card";
 
         const period = document.createElement("div");
         period.className = "monthly-stat-period";
-        period.textContent =
-            `${prevM}月～${currentM}月`;
+
+        // その月の最初と最後の日付
+        const firstDay = Number(first.date.split("-")[2]);
+        const lastDay = Number(last.date.split("-")[2]);
+
+        if (firstDay === lastDay) {
+            period.textContent = `${month}月 ${lastDay}日`;
+        } else {
+            period.textContent = `${month}月 ${firstDay}日～${lastDay}日`;
+        }
 
         const value = document.createElement("div");
         value.className = "monthly-stat-value";
@@ -1123,7 +1125,7 @@ function renderMonthlyStats(records) {
         container.appendChild(card);
     }
 
-    // 最新の月を右端に持っていく
+    // 最新の月を右端に表示
     container.scrollLeft = container.scrollWidth;
 }
 
