@@ -540,9 +540,13 @@ font-size: 16px;
 <div class="history-overlay" id="historyOverlay">
     <div class="history-panel">
         <div class="history-head">
-            <h1 class="history-title">赤晶石収支統計</h1>
-            <button class="history-close" id="historyClose" aria-label="閉じる">×</button>
-        </div>
+    <h1 class="history-title">赤晶石収支統計</h1>
+
+    <div>
+        <button class="history-trash" id="historyTrash" aria-label="保存済み履歴">🗑</button>
+        <button class="history-close" id="historyClose" aria-label="閉じる">×</button>
+    </div>
+</div>
 
         <div class="history-current">
             現在の赤晶石
@@ -559,6 +563,23 @@ font-size: 16px;
             <div class="history-list" id="historyList"></div>
             <div class="history-note">古い記録はグラフ上で自動的にまとめて表示されます。</div>
         </div>
+        <div class="history-manager" id="historyManager">
+    <div class="history-manager-panel">
+
+        <div class="history-manager-head">
+            <h2 class="history-manager-title">保存済み履歴</h2>
+            <button class="history-manager-close" id="historyManagerClose" aria-label="閉じる">×</button>
+        </div>
+
+        <div class="history-manager-list" id="historyManagerList"></div>
+
+    </div>
+</div>
+
+<div class="chart-tooltip" id="chartTooltip">
+    <div class="chart-tooltip-date" id="chartTooltipDate"></div>
+    <div class="chart-tooltip-value" id="chartTooltipValue"></div>
+</div>
     </div>
 </div>
 
