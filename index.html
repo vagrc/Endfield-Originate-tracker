@@ -1162,7 +1162,15 @@ document.getElementById("historyOverlay").addEventListener("click", e => {
 });
 
 document.addEventListener("keydown", e => {
-    if (e.key === "Escape") closeHistory();
+    if (e.key === "Escape") {
+        const manager = document.getElementById("historyManager");
+
+        if (manager.classList.contains("open")) {
+            closeHistoryManager();
+        } else {
+            closeHistory();
+        }
+    }
 });
 
 window.addEventListener("resize", () => {
