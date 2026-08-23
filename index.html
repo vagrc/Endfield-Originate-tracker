@@ -292,6 +292,24 @@ svg { width: 100%; height: 100%; transform: rotate(-90deg); }
     .history-row { padding: 5px 7px; }
     .history-title { font-size: 25px; }
 }
+#saveButton {
+    margin-left: 8px;
+    padding: 5px 10px;
+    border: 1px solid rgba(255, 70, 80, 0.45);
+    border-radius: 6px;
+    background: rgba(255, 70, 80, 0.08);
+    color: rgba(255, 120, 125, 0.9);
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#saveButton:hover {
+    background: rgba(255, 70, 80, 0.18);
+    border-color: rgba(255, 70, 80, 0.8);
+    color: #ff7078;
+}
 </style>
 </head>
 
@@ -312,10 +330,16 @@ svg { width: 100%; height: 100%; transform: rotate(-90deg); }
     </div>
 
     <div class="stats">
-        <input type="text" id="numInput" value="0" autocomplete="off">
-        <span>/</span>
-        <span>660,000</span>
-    </div>
+
+    <input type="text" id="numInput" value="0">
+
+    <span>/</span>
+
+    <span>660,000</span>
+
+    <button id="saveButton">保存</button>
+
+</div>
 </div>
 
 <div class="history-overlay" id="historyOverlay">
@@ -761,11 +785,27 @@ if (raw === "history" || raw === "log") {
 }
 
 updateProgress();
-saveDailyHistory(lastValue).catch(err =>
-    console.error("履歴保存エラー:", err)
-);
 });
+document.getElementById("saveButton").addEventListener("click", async () => {
+    try {
+        await saveValue(lastValue);
+        await saveDailyHistory(lastValue);
 
+        const button = document.getElementById("saveButton");
+        const originalText = button.textContent;
+
+        button.textContent = "保存済み";
+
+        setTimeout(() => {
+            button.textContent = originalText;
+        }, 1200);
+
+    } catch (error) {
+        console.error("保存エラー:", error);
+        alert("保存できませんでした。");
+    }
+});
+    
 document.getElementById("historyClose").addEventListener("click", closeHistory);
 
 document.getElementById("historyOverlay").addEventListener("click", e => {
