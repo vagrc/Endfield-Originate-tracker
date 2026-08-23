@@ -907,6 +907,9 @@ function niceStep(range) {
 
 function drawChart(records) {
     const canvas = document.getElementById("historyChart");
+    const tooltip = document.getElementById("chartTooltip");
+const tooltipDate = document.getElementById("chartTooltipDate");
+const tooltipValue = document.getElementById("chartTooltipValue");
     const empty = document.getElementById("chartEmpty");
     const rect = canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
