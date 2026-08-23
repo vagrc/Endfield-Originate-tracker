@@ -787,16 +787,19 @@ function closeHistory() {
 }
 
 document.getElementById("numInput").addEventListener("input", function() {
-    const value = this.value;
+    // 数字を入力している間はそのまま
+    // history / log も入力途中は許可
+    const value = this.value.toLowerCase();
 
-    // history / log は許可
-    if (/^(history|log)$/i.test(value)) {
+    if (value === "" || /^(history|log)?$/.test(value)) {
         return;
     }
 
-    // 半角数字以外を削除
-    this.value = value.replace(/[^\d]/g, "");
-});    
+    // history / log ではない文字列は半角数字だけにする
+    if (!/^\d[\d,]*$/.test(value)) {
+        this.value = value.replace(/[^\d]/g, "");
+    }
+});
 document.getElementById("numInput").addEventListener("keypress", function(e) {
     if (e.key !== "Enter") return;
 
