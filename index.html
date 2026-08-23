@@ -788,23 +788,29 @@ function closeHistory() {
 
 const numInput = document.getElementById("numInput");
 
-function toHalfWidth(value) {
-    return value.replace(/[０-９]/g, c =>
+function normalizeInput(value) {
+    // 全角数字 → 半角数字
+    value = value.replace(/[０-９]/g, c =>
         String.fromCharCode(c.charCodeAt(0) - 0xFEE0)
     );
+
+    // 数字とカンマ以外を削除
+    value = value.replace(/[^\d,]/g, "");
+
+    return value;
 }
 
 numInput.addEventListener("input", function() {
-    this.value = toHalfWidth(this.value);
+    this.value = normalizeInput(this.value);
 });
 
 numInput.addEventListener("compositionend", function() {
-    this.value = toHalfWidth(this.value);
+    this.value = normalizeInput(this.value);
 });
 
 numInput.addEventListener("keydown", function(e) {
     if (e.key === "Enter") {
-        this.value = toHalfWidth(this.value);
+        this.value = normalizeInput(this.value);
         updateProgress();
         this.blur();
     }
