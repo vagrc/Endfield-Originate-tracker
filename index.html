@@ -1264,7 +1264,8 @@ function normalizeInput(value) {
         String.fromCharCode(c.charCodeAt(0) - 0xFEE0)
     );
 
-    value = value.replace(/[^\d,]/g, "");
+    // 数字・カンマ・スペース・+ だけ残す
+    value = value.replace(/[^\d,\s+]/g, "");
 
     return value;
 }
