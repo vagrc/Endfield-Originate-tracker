@@ -798,6 +798,7 @@ function updateProgress(valueOverride = null, shouldSave = true) {
     }
 
     const currentHSL = `hsl(${hue}, 100%, 55%)`;
+    const complementHSL = `hsl(${(hue + 180) % 360}, 100%, 35%)`;
     const historyCurrentValue = document.getElementById("historyCurrentValue");
 
 if (historyCurrentValue) {
@@ -815,16 +816,31 @@ if (historyCurrentValue) {
 
     percentText.innerText = percentStr + "%";
     percentText.style.color = currentHSL;
-    percentText.style.filter = `drop-shadow(0 0 10px ${currentHSL})`;
+    percentText.style.textShadow =
+    `-1px -1px 0 ${complementHSL},
+     1px -1px 0 ${complementHSL},
+     -1px 1px 0 ${complementHSL},
+     1px 1px 0 ${complementHSL},
+     0 0 8px ${currentHSL}`;
 
     input.value = value.toLocaleString();
     input.style.color = currentHSL;
-    input.style.textShadow = `0 0 10px ${currentHSL}`;
+    input.style.textShadow =
+    `-1px -1px 0 ${complementHSL},
+     1px -1px 0 ${complementHSL},
+     -1px 1px 0 ${complementHSL},
+     1px 1px 0 ${complementHSL},
+     0 0 8px ${currentHSL}`;
 
     if (remaining <= 0) {
         remainingCenter.innerText = "完凸可能";
         remainingCenter.style.color = currentHSL;
-        remainingCenter.style.textShadow = `0 0 15px ${currentHSL}`;
+        remainingCenter.style.textShadow =
+    `-1px -1px 0 ${complementHSL},
+     1px -1px 0 ${complementHSL},
+     -1px 1px 0 ${complementHSL},
+     1px 1px 0 ${complementHSL},
+     0 0 10px ${currentHSL}`;
     } else {
         remainingCenter.innerText = remaining.toLocaleString();
         remainingCenter.style.color = currentHSL;
