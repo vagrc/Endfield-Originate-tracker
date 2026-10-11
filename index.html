@@ -1272,11 +1272,10 @@ numInput.addEventListener("keydown", function(e) {
 
         const command = this.value.trim().toLowerCase();
 
-        if (command === "log" || command === "history") {
+if (/^\d+(?:log|history)$/.test(command) || command === "log" || command === "history") {
     openHistory();
     return;
 }
-
         this.value = normalizeInput(this.value);
         updateProgress();
         this.blur();
