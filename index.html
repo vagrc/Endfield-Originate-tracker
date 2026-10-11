@@ -798,7 +798,7 @@ function updateProgress(valueOverride = null, shouldSave = true) {
     }
 
     const currentHSL = `hsl(${hue}, 100%, 55%)`;
-    const complementHSL = `hsl(${(hue + 180) % 360}, 100%, 35%)`;
+    const complementHSL = `hsl(${(hue + 180) % 360}, 80%, 25%)`;
     const historyCurrentValue = document.getElementById("historyCurrentValue");
 
 if (historyCurrentValue) {
@@ -821,7 +821,7 @@ if (historyCurrentValue) {
      1px -1px 0 ${complementHSL},
      -1px 1px 0 ${complementHSL},
      1px 1px 0 ${complementHSL},
-     0 0 8px ${currentHSL}`;
+     0 0 3px ${currentHSL}`;
 
     input.value = value.toLocaleString();
     input.style.color = currentHSL;
@@ -830,7 +830,7 @@ if (historyCurrentValue) {
      1px -1px 0 ${complementHSL},
      -1px 1px 0 ${complementHSL},
      1px 1px 0 ${complementHSL},
-     0 0 8px ${currentHSL}`;
+     0 0 3px ${currentHSL}`;
 
     if (remaining <= 0) {
         remainingCenter.innerText = "完凸可能";
@@ -840,7 +840,7 @@ if (historyCurrentValue) {
      1px -1px 0 ${complementHSL},
      -1px 1px 0 ${complementHSL},
      1px 1px 0 ${complementHSL},
-     0 0 10px ${currentHSL}`;
+     0 0 4px ${currentHSL}`;
     } else {
         remainingCenter.innerText = remaining.toLocaleString();
         remainingCenter.style.color = currentHSL;
