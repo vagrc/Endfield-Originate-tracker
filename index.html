@@ -878,47 +878,8 @@ async function loadHistory() {
     return records;
 }
 
-/* 長期間の記録を画面上だけ適度にまとめる */
 function aggregateRecords(records) {
-    if (records.length <= 31) return records;
-
-    const now = new Date();
-    const cutoffRecent = new Date(now);
-    cutoffRecent.setDate(cutoffRecent.getDate() - 31);
-
-    const recent = [];
-    const old = [];
-
-    for (const r of records) {
-        const [y,m,d] = r.date.split("-").map(Number);
-        const date = new Date(y, m - 1, d);
-        if (date >= cutoffRecent) recent.push(r);
-        else old.push(r);
-    }
-
-    if (old.length === 0) return recent;
-
-    const groups = new Map();
-
-    for (const r of old) {
-        const [y,m,d] = r.date.split("-").map(Number);
-        const date = new Date(y, m - 1, d);
-
-        let key;
-        if (records.length <= 120) {
-            const day = date.getDay();
-            const monday = new Date(date);
-            const diff = (day + 6) % 7;
-            monday.setDate(date.getDate() - diff);
-            key = getLocalDateKey(monday);
-        } else {
-            key = `${y}-${String(m).padStart(2,"0")}-01`;
-        }
-
-        groups.set(key, r);
-    }
-
-    return [...groups.values(), ...recent].sort((a,b) => a.date.localeCompare(b.date));
+    return records;
 }
 
 function niceStep(range) {
@@ -1032,21 +993,29 @@ const tooltipValue = document.getElementById("chartTooltipValue");
         ctx.stroke();
     });
 
-    /* 横軸の日付。多すぎる場合は間引く */
-    const maxLabels = Math.max(2, Math.floor(chartW / 75));
-    const labelStep = Math.max(1, Math.ceil(records.length / maxLabels));
+    /* 横軸の日付。点は全部残し、ラベルだけ重ならないように間引く */
 
-    ctx.textAlign = "center";
-    ctx.textBaseline = "top";
-    ctx.fillStyle = "rgba(255,255,255,.42)";
-    ctx.font = "10px Arial";
+ctx.textAlign = "center";
+ctx.textBaseline = "top";
+ctx.fillStyle = "rgba(255,255,255,.42)";
+ctx.font = "10px Arial";
 
-    records.forEach((r,i) => {
-        if (i !== records.length - 1 && i % labelStep !== 0) return;
+const minLabelGap = 78;
+let lastLabelX = -Infinity;
 
-        const x = xFor(i);
-        ctx.fillText(formatDate(r.date), x, pad.top + chartH + 12);
-    });
+records.forEach((r, i) => {
+    const x = xFor(i);
+    const isFirst = i === 0;
+    const isLast = i === records.length - 1;
+
+    // 最初と最後は必ず表示
+    if (!isFirst && !isLast && x - lastLabelX < minLabelGap) {
+        return;
+    }
+
+    ctx.fillText(formatDate(r.date), x, pad.top + chartH + 12);
+    lastLabelX = x;
+});
     canvas.onmousemove = function(e) {
     if (!records.length) return;
 
