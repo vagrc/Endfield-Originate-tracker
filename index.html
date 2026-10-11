@@ -1013,7 +1013,13 @@ records.forEach((r, i) => {
         return;
     }
 
-    ctx.fillText(formatDate(r.date), x, pad.top + chartH + 12);
+    const [year, month, day] = r.date.split("-").map(Number);
+
+const label = (i === 0 || (i > 0 && year !== Number(records[i - 1].date.split("-")[0])))
+    ? `${year}/${month}/${day}`
+    : `${month}/${day}`;
+
+ctx.fillText(label, x, pad.top + chartH + 12);
     lastLabelX = x;
 });
     canvas.onmousemove = function(e) {
