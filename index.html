@@ -1260,14 +1260,10 @@ function closeHistory() {
 const numInput = document.getElementById("numInput");
 
 function normalizeInput(value) {
-    value = value.replace(/[０-９]/g, c =>
-        String.fromCharCode(c.charCodeAt(0) - 0xFEE0)
-    );
-
-    // 数字・カンマ・スペース・+ だけ残す
-    value = value.replace(/[^\d,\s+]/g, "");
-
-    return value;
+    return value
+        .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
+        .replace(/,/g, "")
+        .replace(/[^0-9+ \t]/g, "");
 }
 
 numInput.addEventListener("keydown", function(e) {
