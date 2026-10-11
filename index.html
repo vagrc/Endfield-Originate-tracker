@@ -1291,7 +1291,7 @@ numInput.addEventListener("blur", function() {
         return;
     }
 
-    if (!/^[0-9０-９,]+$/.test(value)) {
+    if (!/^[0-9０-９, +]+$/.test(value)) {
         this.value = lastValue.toLocaleString();
         return;
     }
