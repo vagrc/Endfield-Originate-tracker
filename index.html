@@ -826,21 +826,21 @@ if (historyCurrentValue) {
     input.value = value.toLocaleString();
     input.style.color = currentHSL;
     input.style.textShadow =
-    `-1px -1px 0 ${complementHSL},
-     1px -1px 0 ${complementHSL},
-     -1px 1px 0 ${complementHSL},
-     1px 1px 0 ${complementHSL},
+    `-0.5px -0.5px 0 ${complementHSL},
+     0.5px -0.5px 0 ${complementHSL},
+     -0.5px 0.5px 0 ${complementHSL},
+     0.5px 0.5px 0 ${complementHSL},
      0 0 3px ${currentHSL}`;
 
     if (remaining <= 0) {
         remainingCenter.innerText = "完凸可能";
         remainingCenter.style.color = currentHSL;
         remainingCenter.style.textShadow =
-    `-1px -1px 0 ${complementHSL},
-     1px -1px 0 ${complementHSL},
-     -1px 1px 0 ${complementHSL},
-     1px 1px 0 ${complementHSL},
-     0 0 4px ${currentHSL}`;
+    `-0.5px -0.5px 0 ${complementHSL},
+     0.5px -0.5px 0 ${complementHSL},
+     -0.5px 0.5px 0 ${complementHSL},
+     0.5px 0.5px 0 ${complementHSL},
+     0 0 3px ${currentHSL}`;
     } else {
         remainingCenter.innerText = remaining.toLocaleString();
         remainingCenter.style.color = currentHSL;
